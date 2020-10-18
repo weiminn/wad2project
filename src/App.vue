@@ -5,6 +5,12 @@
   </div>
 </template>
 
+<template>
+  <b-container>
+    <p>Hello, Bootstrap-Vue</p>
+  </b-container>
+</template>
+
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 
