@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "booking" : "SIS GSR 2-2",
+        "coBookers" : ["John", "Amy"],
+        "bookingStart" : "2020-10-28T12:00:00Z",
+        "bookingEnd" : "2020-10-28T14:00:00Z",
+        "status" : "A"
+    },
+    {
+        "id": 2,
+        "booking" : "SIS GSR 2-4",
+        "coBookers" : ["John", "Amy"],
+        "bookingStart" : "2020-10-28T12:00:00Z",
+        "bookingEnd" : "2020-10-28T12:30:00Z",
+        "status" : "P"
+    },
+    {
+        "id": 3,
+        "booking" : "SIS GSR 2-6",
+        "coBookers" : ["John"],
+        "bookingStart" : "2020-10-28T15:00:00Z",
+        "bookingEnd" : "2020-10-28T18:00:00Z",
+        "status" : "TBC"
+    },
+    {
+        "id": 4,
+        "booking" : "SIS GSR 2-5",
+        "coBookers" : ["John", "Amy"],
+        "bookingStart" : "2020-10-28T08:00:00Z",
+        "bookingEnd" : "2020-10-28T10:00:00Z",
+        "status" : "TBC"
+    },
+    {
+        "id": 5,
+        "booking" : "SIS SR 2-4",
+        "coBookers" : ["John", "Amy", "Ryan"],
+        "bookingStart" : "2020-10-28T04:00:00Z",
+        "bookingEnd" : "2020-10-28T07:00:00Z",
+        "status" : "P"
+    },
+    {
+        "id": 6,
+        "booking" : "SIS GSR 2-5",
+        "coBookers" : ["John", "Amy"],
+        "bookingStart" : "2020-10-28T12:00:00Z",
+        "bookingEnd" : "2020-10-28T15:00:00Z",
+        "status" : "P"
+    }
+]

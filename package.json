@@ -10,6 +10,7 @@
   "dependencies": {
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
+    "image-map-resizer": "^1.0.10",
     "vue": "^2.6.11",
     "vue-cal": "^3.8.1",
     "vue-horizontal-scroll": "^0.2.4",

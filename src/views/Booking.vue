@@ -19,21 +19,21 @@ export default {
   components: {
     Card,
   },
-  mounted() {
-    this.fetchData();
-  },
+  // mounted() {
+  //   this.fetchData();
+  // },
   data() {
     return {
       photos: [],
     };
   },
   methods: {
-    async fetchData() {
-      const res = await fetch("https://picsum.photos/v2/list");
-      const val = await res.json();
-      console.log(val);
-      this.photos = val;
-    },
+    // async fetchData() {
+    //   const res = await fetch("https://picsum.photos/v2/list");
+    //   const val = await res.json();
+    //   console.log(val);
+    //   this.photos = val;
+    // },
   },
 };
 </script>
