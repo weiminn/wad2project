@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Booking from "../views/Booking.vue";
 import Task from "../views/Task.vue";
+import Schedule from "../views/Schedule.vue";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes = [
     path: "/tasks",
     name: "Task",
     component: Task
+  },
+  {
+    path: "/schedule",
+    name: "Schedule",
+    component: Schedule
   }
 ];
 
