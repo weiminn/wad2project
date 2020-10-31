@@ -12,26 +12,28 @@
       :disable-views="['years', 'month', 'year', 'week']"
       active-view="day"
       editable-events
-      :events="booked"
+      :events="books"
       :split-days="daySplits"
+      :min-split-width="70"
       @event-drag-create="onEventCreate"
+      @event-duration-change="onEventChange"
     />
     <!-- style bookings -->
 
-    <b-button style="margin-top: 20px;" variant="primary">NEXT</b-button>
+    <b-button @click="next" style="margin-top: 20px;" variant="primary">NEXT</b-button>
   </div>
 </template>
 
 <script>
-// import Chart from "@/components/Chart.vue";
+
 import VueCal from "vue-cal";
 import "vue-cal/dist/vuecal.css";
-// import axios from "axios";
 
+// import router from '../router/index.js';
 import app from "../firebase.service.js";
 
 const db = app.database();
-const bookingsRef = db.ref("booking");
+const bookingRef = db.ref("booking");
 
 export default {
   name: "Schedule",
@@ -46,84 +48,81 @@ export default {
     return {
       from: 1000,
       to: 1500,
-      selectedRoom: null,
-      rooms: [
-        {
-          id: "SIS 3-24",
-          building: "SIS",
-          type: "GSR",
-          level: "3",
-          unit: "24",
-          timeslots_available: {
-            "1000~1029": true,
-            "1030~1059": true
-          },
-          timeslots_selected: {
-            "1000~1029": true,
-            "1030~1059": true
-          }
-        }
+      roomsToRetrieve: [
+          "SIS GSR 2-1",
+          "SIS GSR 2-2",
+          "SIS GSR 2-3",
+          "SIS GSR 2-4",
       ],
-
-      booked: [
-        {
-          start: "2020-10-28 10:30",
-          end: "2020-10-28 11:40",
-          class: "unavail",
-          background: true,
-          deletable: false, // optional - force undeletable when events are editable.
-          resizable: false,
-          split: 1
-        }
-        // {
-        //     start: '2020-10-28 13:00',
-        //     end: '2020-10-28 14:10',
-        //     class: 'unavail',
-        //     background: true,
-        //     deletable: false, // optional - force undeletable when events are editable.
-        //     resizable: false,
-        //     split: 2
-        // },
-      ],
-      daySplits: [
-        {
-          id: 1,
-          label: "1"
-        },
-        {
-          id: 2,
-          label: "2"
-        }
-      ]
+      selected: null,
+      books: [],
+      daySplits: []
     };
   },
   methods: {
     async fetchData() {
-        
-        //display rooms 
+      //display rooms
+        for (let index = 1; index <= this.roomsToRetrieve.length; index++) {
+            this.daySplits.push({
+                id: index,
+                label: this.roomsToRetrieve[index-1]
+            });
+        }
 
-        //retrieve bookings for particular date and rooms
+      //retrieve bookings for particular date and rooms
+      bookingRef.once("value").then((snapshot) => {
+        let data = snapshot.val();
+        var _books = Object.values(data).filter((b) => 
+            (new Date(Date.parse(b.bookingStart))).getDate().toString() == (new Date()).getDate().toString() &&
+            (new Date(Date.parse(b.bookingStart))).getMonth().toString() == (new Date()).getMonth().toString() &&
+            (new Date(Date.parse(b.bookingStart))).getFullYear().toString() == (new Date()).getFullYear().toString()
+        );
+        // console.log("filtered: " + _books.length)
 
-      bookingsRef.once("value").then(function(snapshot) {
-          let data = snapshot.val();
-          console.log(data);
-
-          //populate bookings for the rooms
-
-      })
+        // populate bookings for the rooms
+        _books.forEach(b => {
+            for (const s of this.daySplits) {
+                // console.log('checking: ' + s.id + " " + s.label + " with " + b.booking);
+                if(s.label == b.booking) {
+                    b.split = s.id;
+                };
+            }
+            
+            b.deletable = false;
+            b.resizable = false;
+            this.books.push(b);
+        })
+      });
     },
-    onEventCreate: function(event) {
+    onEventChange: function(event) {
       console.log(event);
-      console.log(this.booked.length);
-      console.log(event.start);
-      console.log(event.end);
-      return event;
+      console.log(this.books.length);
+      
 
       //check if event clashes
+    },
+    onEventCreate: function(event) {
+      this.selected = {
+        bookingStart: event.start.toLocaleString(),
+        bookingEnd: event.end.toLocaleString(),
+        booking: this.daySplits.filter(s => s.id == event.split)[0].label
+      };
+    //   bookingRef.push(this.selected);
 
-    }, 
-    next: function(){
-        //pass on the data to ama's wizard
+      //check if event clashes
+    },
+    checkClash(){
+
+    },
+    next: function() {
+      //pass on the data to ama's wizard
+      console.log("Sending: " + JSON.stringify(this.selected));
+        this.$router.push({
+            name: 'BookingForm',
+            params: {
+                selectedTiming: this.selected
+            }
+        });
     }
   }
 };
