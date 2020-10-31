@@ -13,11 +13,16 @@
     "core-js": "^3.6.5",
     "firebase": "^8.0.0",
     "image-map-resizer": "^1.0.10",
+    "moment": "^2.29.1",
+    "themify-icons": "^1.0.0",
     "vue": "^2.6.11",
     "vue-cal": "^3.8.1",
+    "vue-form-wizard": "^0.8.4",
     "vue-horizontal-scroll": "^0.2.4",
+    "vue-ics": "^0.1.4",
     "vue-router": "^3.2.0",
     "vue-scroll-sync": "^1.0.5",
+    "vue-themify-icons": "^1.0.0",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

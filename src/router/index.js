@@ -4,6 +4,11 @@ import Home from "../views/Home.vue";
 import Booking from "../views/Booking.vue";
 import Task from "../views/Task.vue";
 import Schedule from "../views/Schedule.vue";
+import BookingForm from "../views/BookingForm.vue";
+import Test from "../views/test.vue";
+import Test2 from "../views/test2.vue";
+
+
 
 Vue.use(VueRouter);
 
@@ -27,7 +32,13 @@ const routes = [
     path: "/schedule",
     name: "Schedule",
     component: Schedule
-  }
+  },
+{ 
+    path: "/bookingForm",
+    name: "BookingForm",
+    component: BookingForm
+  },
+ 
 ];
 
 const router = new VueRouter({
