@@ -12,7 +12,6 @@
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
     "firebase": "^8.0.0",
-    "firebase-admin": "^9.3.0",
     "image-map-resizer": "^1.0.10",
     "moment": "^2.29.1",
     "themify-icons": "^1.0.0",
