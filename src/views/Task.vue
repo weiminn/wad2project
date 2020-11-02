@@ -7,13 +7,9 @@
     </div>
 
     <b-row>
-      <b-col sm="12" md="6" lg="3" v-for="task in tasks" :key="task.id">
+      <b-col sm="12" md="6" lg="4" v-for="task in tasks" :key="task.id">
         <TaskCard
-          :booking="task.booking"
-          :bookingStart="new Date(task.bookingStart)"
-          :bookingEnd="new Date(task.bookingEnd)"
-          :coBookers="task.coBookers"
-          :status="task.status"
+          :bookingDetails="task"
         />
       </b-col>
     </b-row>
@@ -22,7 +18,11 @@
 
 <script>
 import TaskCard from "@/components/TaskCard";
-import TaskData from "@/assets/tasks.json";
+
+import app from "../firebase.service.js";
+
+const db = app.database();
+const bookingsRef = db.ref("booking");
 
 export default {
   components: {
@@ -30,13 +30,49 @@ export default {
   },
   data() {
     return {
-      tasks: TaskData,
+      tasks: {},
     };
+  },
+  mounted(){
+    this.fetchData();
   },
   methods: {
     acceptAll: function() {
       alert('Accepting all "To Be Confirmed" tasks');
+      this.tasks.map((val) => {
+        if (val.status.toUpperCase() == "TBC"){
+          this.$set(val, "status", "A");
+
+          var data = Object.keys(val).reduce((object, key) => {
+            if (key !== "id") {
+              object[key] = val[key];
+            }
+            return object;
+          }, {});
+          bookingsRef.child(val.id).update(data);
+        }
+      })
     },
+    fetchData: async function (){
+      
+      let data = await bookingsRef.once("value").then(function(snapshot) {
+          let data = snapshot.val();
+          
+          let dataFormatted = data.map((val, index) => {
+            if (val != null){
+              return {...val, id: index}
+            }
+          })
+
+          dataFormatted = dataFormatted.filter(val => {
+            return val != null
+          })
+
+          return dataFormatted
+      }).then(res => {return res})
+
+      this.tasks = data;
+    }
   },
 };
 </script>

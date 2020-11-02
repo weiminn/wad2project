@@ -5,15 +5,16 @@
         <b-col cols="12">
           {{ formatDateRange(bookingStart, bookingEnd) }}
         </b-col>
-        <b-col cols="12">Co-Booker(s) : {{ coBookers.join(", ") }}</b-col>
+        <b-col cols="12">Co-Booker(s) : {{ loadCoBookers(coBookers) }}</b-col>
         <b-col class="text-right pt-2">
           <b-button
             :variant="getBtnClass(status)"
-            v-on:click.prevent="accept($event, status)"
+            v-on:click.prevent="accept($event, bookingDetails)"
             :data-booking="booking"
             :data-booking_time="formatDateRange(bookingStart, bookingEnd)"
+            :disabled="isDisabled(bookingDetails.status.toUpperCase())"
           >
-            {{ STATUS[status] }}
+            {{ STATUS[status.toUpperCase()] }}
           </b-button>
         </b-col>
       </b-row>
@@ -22,14 +23,15 @@
 </template>
 
 <script>
+import app from "../firebase.service.js";
+
+const db = app.database();
+const bookingsRef = db.ref("booking");
+
 export default {
   name: "Card",
   props: {
-    booking: String,
-    coBookers: Array,
-    bookingStart: Date,
-    bookingEnd: Date,
-    status: String,
+    bookingDetails: Object,
   },
   data() {
     return {
@@ -40,12 +42,28 @@ export default {
       },
     };
   },
+  computed: {
+    bookingStart: function() {
+      return new Date(this.bookingDetails.bookingStart);
+    },
+    bookingEnd: function() {
+      return new Date(this.bookingDetails.bookingEnd);
+    },
+    status: function() {
+      return this.bookingDetails.status.toUpperCase();
+    },
+    coBookers: function() {
+      return this.bookingDetails.coBookers;
+    },
+    booking: function() {
+      return this.bookingDetails.booking;
+    },
+  },
   methods: {
-    accept: function(evt, status) {
-      console.log(evt.target.dataset);
+    accept: function(evt, details) {
       let booking = evt.target.dataset.booking;
       let bookingTime = evt.target.dataset.booking_time;
-      switch (status) {
+      switch (this.status) {
         case "A":
           alert(
             `Booking for ${booking}, ${bookingTime} has already been accepted`
@@ -53,12 +71,31 @@ export default {
           break;
         case "TBC":
           alert(`Accepting Booking for ${booking}, ${bookingTime}`);
+          this.$set(details, "status", "A");
+          var data = Object.keys(details).reduce((object, key) => {
+            if (key !== "id") {
+              object[key] = details[key];
+            }
+            return object;
+          }, {});
+
+          bookingsRef.child(details.id).update(data);
           break;
         default:
           alert(
             `Booking for ${booking}, ${bookingTime} needs to be confirmed by co-booker(s)`
           );
           break;
+      }
+    },
+    isDisabled: function(status) {
+      switch (status) {
+        case "A":
+          return true;
+        case "TBC":
+          return false;
+        default:
+          return false;
       }
     },
 
@@ -97,6 +134,12 @@ export default {
           DateTimeOpt
         )}`;
       }
+    },
+
+    loadCoBookers: function(coBookers) {
+      // console.log(coBookers)
+
+      return coBookers.join(", ");
     },
   },
 };
