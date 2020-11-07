@@ -12,6 +12,11 @@
 import Header from "@/components/Header.vue"
 export default {
   name: "App",
+  beforeCreate () {
+    if (! this.$store.state.isLoggedIn) {
+      this.$router.push({ name: 'Login' })
+    }
+  },
   components: {
     Header
   }

@@ -31,8 +31,13 @@ export default {
   data() {
     return {
       tasks: {},
-      userID: "u3cQAj4N3uRxoGyn0bcA5AaOAja2"
     };
+  },
+  computed :{
+
+    userInfo() {
+      return this.$store.getters.getUserInfo;
+    }
   },
   mounted(){
     this.fetchData();
@@ -55,7 +60,8 @@ export default {
       })
     },
     fetchData: async function (){
-      let userID = this.userID;
+      let userInfo = this.userInfo;
+      let userID = userInfo.userID
       let data = await bookingsRef.once("value").then(function(snapshot) {
           let data = snapshot.val();
           let keys = Object.keys(data);
