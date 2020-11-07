@@ -20,9 +20,11 @@
     "vue-form-wizard": "^0.8.4",
     "vue-horizontal-scroll": "^0.2.4",
     "vue-ics": "^0.1.4",
+    "vue-multiselect": "^2.1.6",
     "vue-router": "^3.2.0",
     "vue-scroll-sync": "^1.0.5",
     "vue-themify-icons": "^1.0.0",
+    "vue2-timepicker": "^1.1.5",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
