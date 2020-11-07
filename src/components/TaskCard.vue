@@ -1,25 +1,26 @@
 <template>
-  <b-card bg-variant="light" :title="booking" align="left">
-    <b-card-text>
-      <b-row>
-        <b-col cols="12">
-          {{ formatDateRange(bookingStart, bookingEnd) }}
-        </b-col>
-        <b-col cols="12">Co-Booker(s) : {{ loadCoBookers(coBookers) }}</b-col>
-        <b-col class="text-right pt-2">
-          <b-button
-            :variant="getBtnClass(status)"
-            v-on:click.prevent="accept($event, bookingDetails)"
-            :data-booking="booking"
-            :data-booking_time="formatDateRange(bookingStart, bookingEnd)"
-            :disabled="isDisabled(bookingDetails.status.toUpperCase())"
-          >
-            {{ STATUS[status.toUpperCase()] }}
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-card-text>
-  </b-card>
+    <b-card v-if="isFetched" bg-variant="light" :title="booking" align="left">
+      <b-card-text>
+        <b-row>
+          <b-col cols="12">
+            {{ formatDateRange(bookingStart, bookingEnd) }}
+          </b-col>
+          <b-col cols="12">Booker : {{ booker_name }}</b-col>
+          <b-col cols="12">Co-Booker(s) : {{ coBookers_names.join(", ") }}</b-col>
+          <b-col class="text-right pt-2">
+            <b-button
+              :variant="getBtnClass(status)"
+              v-on:click.prevent="accept($event, bookingDetails)"
+              :data-booking="booking"
+              :data-booking_time="formatDateRange(bookingStart, bookingEnd)"
+              :disabled="isDisabled(bookingDetails.status.toUpperCase())"
+            >
+              {{ STATUS[status.toUpperCase()] }}
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card-text>
+    </b-card>
 </template>
 
 <script>
@@ -27,6 +28,7 @@ import app from "../firebase.service.js";
 
 const db = app.database();
 const bookingsRef = db.ref("booking");
+const userRef = db.ref("user");
 
 export default {
   name: "Card",
@@ -38,8 +40,11 @@ export default {
       STATUS: {
         P: "Pending Confimation",
         A: "Accepted",
-        TBC: "To Be Confirmed",
       },
+      coBookers: this.bookingDetails.coBookers,
+      booker: this.bookingDetails.booker,
+      coBookers_names: null,
+      booker_name: null,
     };
   },
   computed: {
@@ -52,12 +57,12 @@ export default {
     status: function() {
       return this.bookingDetails.status.toUpperCase();
     },
-    coBookers: function() {
-      return this.bookingDetails.coBookers;
-    },
     booking: function() {
       return this.bookingDetails.booking;
     },
+    isFetched : function(){
+      return this.coBookers_names != null && this.booker_name != null
+    }
   },
   methods: {
     accept: function(evt, details) {
@@ -69,7 +74,7 @@ export default {
             `Booking for ${booking}, ${bookingTime} has already been accepted`
           );
           break;
-        case "TBC":
+        case "P":
           alert(`Accepting Booking for ${booking}, ${bookingTime}`);
           this.$set(details, "status", "A");
           var data = Object.keys(details).reduce((object, key) => {
@@ -82,9 +87,6 @@ export default {
           bookingsRef.child(details.id).update(data);
           break;
         default:
-          alert(
-            `Booking for ${booking}, ${bookingTime} needs to be confirmed by co-booker(s)`
-          );
           break;
       }
     },
@@ -92,7 +94,7 @@ export default {
       switch (status) {
         case "A":
           return true;
-        case "TBC":
+        case "P":
           return false;
         default:
           return false;
@@ -103,7 +105,7 @@ export default {
       switch (status) {
         case "A":
           return "outline-success";
-        case "TBC":
+        case "P":
           return "outline-info";
         default:
           return "outline-warning";
@@ -120,28 +122,28 @@ export default {
         hour12: false,
       };
       if (start.toDateString() == end.toDateString()) {
-        return `${start.toLocaleString(
-          [],
-          DateTimeOpt
-        )} - ${end.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: false,
-        })}`;
+        return `${start.toLocaleString([],DateTimeOpt)} - ${end.toLocaleTimeString([], {hour: "numeric", minute: "numeric", hour12: false})}`;
       } else {
-        return `${start.toLocaleString([], DateTimeOpt)} - ${end.toLocaleString(
-          [],
-          DateTimeOpt
-        )}`;
+        return `${start.toLocaleString([], DateTimeOpt)} - ${end.toLocaleString([],DateTimeOpt)}`;
       }
     },
-
-    loadCoBookers: function(coBookers) {
-      // console.log(coBookers)
-
-      return coBookers.join(", ");
-    },
   },
+  async created() {
+    this.coBookers_names = await Promise.all(this.coBookers.map(async (val) => {
+      let fullName = await userRef.child(val).once("value").then(function(snapshot) {
+          let data = snapshot.val();
+          return data.fullName
+      }).then(res => {return res})  
+      
+      return fullName
+    }))
+
+    this.booker_name = await userRef.child(this.booker).once("value").then(function(snapshot){
+      let data = snapshot.val();
+      return data.fullName
+    }).then(res => {return res})
+
+  }
 };
 </script>
 

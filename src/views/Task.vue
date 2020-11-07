@@ -31,6 +31,7 @@ export default {
   data() {
     return {
       tasks: {},
+      userID: "u3cQAj4N3uRxoGyn0bcA5AaOAja2"
     };
   },
   mounted(){
@@ -54,19 +55,23 @@ export default {
       })
     },
     fetchData: async function (){
-      
+      let userID = this.userID;
       let data = await bookingsRef.once("value").then(function(snapshot) {
           let data = snapshot.val();
-          
-          let dataFormatted = data.map((val, index) => {
+          let keys = Object.keys(data);
+
+          let dataFormatted = Object.values(data).map((val,index) => {
             if (val != null){
-              return {...val, id: index}
+              if("coBookers" in val && val.coBookers.includes(userID)){
+                return {...val, status: val.status.toUpperCase(), id: keys[index]}
+              }
             }
           })
 
           dataFormatted = dataFormatted.filter(val => {
             return val != null
           })
+
 
           return dataFormatted
       }).then(res => {return res})
