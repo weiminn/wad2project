@@ -43,10 +43,16 @@ export default {
   },
   methods: {
     acceptAll: function() {
-      alert('Accepting all "To Be Confirmed" tasks');
+      alert('Accepting all "Pending Confirmation" tasks');
+      var userInfo = this.userInfo
+      var userID = userInfo.userID;
       this.tasks.map((val) => {
-        if (val.status.toUpperCase() == "TBC"){
-          this.$set(val, "status", "A");
+        if (val.status.toUpperCase() == "P"){
+          
+          this.$set(val.coBookers, userID, true);
+
+          var status = Object.values(val.coBookers).every(v => v === true) ? 'A' : 'P'
+          this.$set(val, "status", status);
 
           var data = Object.keys(val).reduce((object, key) => {
             if (key !== "id") {
@@ -57,6 +63,7 @@ export default {
           bookingsRef.child(val.id).update(data);
         }
       })
+      this.$router.go();
     },
     fetchData: async function (){
       let userInfo = this.userInfo;
@@ -65,9 +72,9 @@ export default {
           let data = snapshot.val();
           let keys = Object.keys(data);
 
-          let dataFormatted = Object.values(data).map((val,index) => {
+          let dataFormatted = Object.values(data).map((val, index) => {
             if (val != null){
-              if("coBookers" in val && val.coBookers.includes(userID)){
+              if("coBookers" in val && userID in val.coBookers && !val.coBookers[userID]){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
               }
             }
@@ -79,7 +86,7 @@ export default {
           dataFormatted = dataFormatted.filter(val => {
             return val.status != "A"
           })
-
+          console.log(dataFormatted);
           return dataFormatted
       }).then(res => {return res})
 

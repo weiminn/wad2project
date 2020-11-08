@@ -76,7 +76,14 @@ export default {
           break;
         case "P":
           alert(`Accepting Booking for ${booking}, ${bookingTime}`);
-          this.$set(details, "status", "A");
+          var userInfo = this.$store.getters.getUserInfo
+          var userID = userInfo.userID;
+          this.$set(details.coBookers, userID, true);
+
+          var status = Object.values(details.coBookers).every(v => v === true) ? 'A' : 'P'
+          this.$set(details, "status", status);
+          
+
           var data = Object.keys(details).reduce((object, key) => {
             if (key !== "id") {
               object[key] = details[key];
@@ -85,6 +92,7 @@ export default {
           }, {});
 
           bookingsRef.child(details.id).update(data);
+          this.$router.go()
           break;
         default:
           break;
@@ -129,7 +137,7 @@ export default {
     },
   },
   async created() {
-    this.coBookers_names = await Promise.all(this.coBookers.map(async (val) => {
+    this.coBookers_names = await Promise.all(Object.keys(this.coBookers).map(async (val) => {
       let fullName = await userRef.child(val).once("value").then(function(snapshot) {
           let data = snapshot.val();
           return data.fullName
