@@ -9,7 +9,7 @@
         <b-navbar-nav>
           <b-nav-item to="/">Home</b-nav-item>
           <b-nav-item to="/booking">My Bookings</b-nav-item>
-          <b-nav-item to="/tasks">Tasks</b-nav-item>
+          <b-nav-item to="/tasks">Tasks <span class="text-danger text-bold"> ({{getPendingCount}})</span></b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -19,6 +19,11 @@
 <script>
 export default {
   name: "Header",
+  computed:{
+    getPendingCount:function(){
+      return 1;
+    }
+  }
 };
 </script>
 
