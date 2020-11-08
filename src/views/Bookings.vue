@@ -61,15 +61,16 @@ export default {
 
           dataFormatted = dataFormatted.filter(val => {
             return val != null
-          })
-
-            dataFormatted = dataFormatted.filter(val => {
+          }).filter(val => {
+            return new Date(val.bookingEnd).getTime() > new Date().getTime()
+          }).filter(val => {
             return val.status != "P" 
-          })
-
-             dataFormatted = dataFormatted.filter(val => {
+          }).filter(val => {
             return val.status != "p" 
           })
+
+       
+         
 
           console.log(dataFormatted)
 
