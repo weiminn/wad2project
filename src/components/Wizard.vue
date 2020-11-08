@@ -287,7 +287,7 @@
 <script>
 import moment from "moment";
 import app from "../firebase.service.js";
-import admin from "../firebase.admin.js";
+// import admin from "../firebase.admin.js";
 
 const db = app.database();
 const userRef = db.ref("user");
