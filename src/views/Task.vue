@@ -76,7 +76,9 @@ export default {
           dataFormatted = dataFormatted.filter(val => {
             return val != null
           })
-
+          dataFormatted = dataFormatted.filter(val => {
+            return val.status != "A"
+          })
 
           return dataFormatted
       }).then(res => {return res})
