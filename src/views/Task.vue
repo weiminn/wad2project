@@ -34,7 +34,6 @@ export default {
     };
   },
   computed :{
-
     userInfo() {
       return this.$store.getters.getUserInfo;
     }
@@ -84,7 +83,7 @@ export default {
 
       this.tasks = data;
     }
-  },
+  }
 };
 </script>
 

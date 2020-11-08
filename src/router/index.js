@@ -6,6 +6,7 @@ import Task from "../views/Task.vue";
 import Schedule from "../views/Schedule.vue";
 import BookingForm from "../views/BookingForm.vue";
 import Login from "../views/Login.vue";
+import Logout from "../views/Logout.vue";
 
 Vue.use(VueRouter);
 
@@ -40,6 +41,12 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+    props: true
+  },
+  { 
+    path: "/logout",
+    name: "Logout",
+    component: Logout,
     props: true
   },
  

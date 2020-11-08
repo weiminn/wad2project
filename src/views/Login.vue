@@ -1,53 +1,52 @@
 <template>
-  <div class="app"></div>
+  <div class="app">
+    <div class="padding-top-60">
+      <h5>MeetingGoWhere</h5>
+      <div id="firebase-container"></div>
+    </div>
+    
+    
+    
+  </div>
 </template>
 
 <script>
 import app from "../firebase.service.js";
+import "firebaseui/dist/firebaseui.css";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import * as firebaseui from "firebaseui";
 
-const db = app.database();
-const users = db.ref("user");
 
 export default {
   data() {
-    return {
-      user_info: null,
-    };
+    return {};
   },
-  methods: {
-    Login() {
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: "qilin.po.2018@smu.edu.sg",
-          password: "password123",
-        }),
-      };
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCmZJ4B0b_XffgrNtfP6GT1Kf1yHJvbqPM",
-        requestOptions
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          // console.log(data)
-          if ("localId" in data){
-            this.LoadUserProfile(data.localId)
-          }
-          
-        })
-    },
-
-    LoadUserProfile(user_id) {
-      users.child(user_id).once("value").then((snapshot) => {
-        let data = snapshot.val();
-        this.$store.dispatch("logInUser", {userInfo: {...data, userID: user_id}, loggedInStatus: true});
-        this.user_info = data;
-      });
-    },
-  },
+  methods: {},
   mounted() {
-    this.Login();
+    // this.Login();
+    let uiConfig = {
+      signInSuccessUrl: "/",
+      signInOptions: [
+        firebase.default.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.default.auth.EmailAuthProvider.PROVIDER_ID,
+      ],
+    };
+
+    if (firebaseui.auth.AuthUI.getInstance()) {
+      let ui = firebaseui.auth.AuthUI.getInstance();
+      ui.start("#firebase-container", uiConfig);
+    } else {
+      let ui = new firebaseui.auth.AuthUI(app.auth());
+      ui.start("#firebase-container", uiConfig);
+    }
+    
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.padding-top-60 {
+  padding-top: 60px;
+}
+</style>
