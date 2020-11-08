@@ -404,7 +404,7 @@
           </div>
 
           <div class="d-flex justify-content-left">
-            <b-button :disabled="disableSearch" id="searchBtn" @click="sendFacilities" class="mt-2 mb-5" style="background-color:#102B72">Search Availability</b-button>
+            <b-button @click="sendFacilities" :disabled="disableSearch" id="searchBtn"  class="mt-2 mb-5" style="background-color:#102B72">Search Availability</b-button>
           </div>
         </div>
 
@@ -747,10 +747,19 @@ export default {
       }
     },
     sendFacilities: function(){
-      let json = [{fromTime : this.fromTime.HH+":"+this.fromTime.mm},
-                  {toTime : this.toTime.HH+":"+this.toTime.mm},
-                  {selectedFacilities: this.selectedFacility}]
-      console.log(json);
+      let fromDateTime = new Date(this.date);
+      let toDateTime = new Date(this.date);
+
+      fromDateTime.setHours( this.fromTime.HH,this.fromTime.mm,0,0 );
+      toDateTime.setHours( this.toTime.HH,this.toTime.mm,0,0 );
+
+      this.$router.push({
+        name: 'Schedule',
+        params:{data: {
+                fromDateTime : fromDateTime,
+                toDateTime : toDateTime,
+                selectedFacilities: this.selectedFacility}}
+      })
     },
     getBookingAvailability: function(){
 
