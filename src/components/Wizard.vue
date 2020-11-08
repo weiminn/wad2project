@@ -11,7 +11,8 @@
               <b-form-input
                 type="date"
                 id="bookingDate"
-                :value="date"
+                :value="bookingDate"
+                v-model="bookingDate"
                 disabled
               ></b-form-input>
             </b-input-group>
@@ -57,9 +58,7 @@
                 :options="facilityOptions"
                 disabled
               >
-                <template v-slot:first>
-                  <option value="" disabled>- Select Facility -</option>
-                </template>
+                <template v-slot:first> </template>
               </b-form-select>
             </b-input-group>
           </b-col>
@@ -73,6 +72,7 @@
                 id="link"
                 :value="purpose"
                 placeholder="Enter purpose of booking"
+                required
               ></b-form-input>
             </b-input-group>
           </b-col>
@@ -81,7 +81,12 @@
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
           <b-col sm="12" md="12" lg="6">
             <b-input-group size="md" prepend="Use Type">
-              <b-form-select name="usetype" id="usetype" v-model="usetype">
+              <b-form-select
+                name="usetype"
+                id="usetype"
+                v-model="usetype"
+                required
+              >
                 <template v-slot:first>
                   <option value="" disabled>- Select Use Type -</option>
                   <option value="academic">Academic</option>
@@ -92,27 +97,6 @@
           </b-col>
         </b-row>
 
-        <div v-if="usetype == 'academic'">
-          <b-row
-            style="margin-top:'30px'"
-            class="d-flex justify-content-center"
-          >
-            <b-col sm="12" md="12" lg="6">
-              <b-input-group size="md" prepend="Course Code">
-                <b-form-select
-                  name="course"
-                  id="course"
-                  :options="courseOptions"
-                >
-                  <template v-slot:first>
-                    <option value="" disabled>- Select Course Code -</option>
-                  </template>
-                </b-form-select>
-              </b-input-group>
-            </b-col>
-          </b-row>
-        </div>
-
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
           <b-col sm="12" md="12" lg="6">
             <b-input-group size="md" prepend="Booking Usage">
@@ -120,6 +104,7 @@
                 v-model="bookingUsage"
                 name="bookingUsage"
                 id="bookingUsage"
+                required
               >
                 <template v-slot:first>
                   <option value="interview">Interview-</option>
@@ -171,7 +156,6 @@
             ref="selectedTable"
             ef="selectableTable"
             selectable
-            :select-mode="selectMode"
             :items="items"
             :fields="fields"
             responsive="sm"
@@ -219,13 +203,18 @@
           <b-table
             class="col-md-6 col-lg-6 col-sm-12"
             ref="selectableURLTable"
-            selectable
             :items="urlItems"
             :fields="urlFields"
-            @row-selected="onURLRowSelected"
             responsive="sm"
             caption-top
           >
+            <template #cell(actions)="row">
+              <template v-if="row">
+                <b-button size="sm" @click="onURLRowSelected(row.item)">
+                  Remove
+                </b-button>
+              </template>
+            </template>
           </b-table>
         </div>
       </div>
@@ -275,7 +264,12 @@
                   </ol>
                 </b-col>
               </b-row>
-              <b-check>I agree</b-check>
+              <b-check
+                v-model="checkSelected"
+                id="checkSelected"
+                :checked="checkSelected"
+                >I agree</b-check
+              >
             </b-jumbotron>
           </b-col>
         </b-row>
@@ -287,7 +281,6 @@
 <script>
 import moment from "moment";
 import app from "../firebase.service.js";
-// import admin from "../firebase.admin.js";
 
 const db = app.database();
 const userRef = db.ref("user");
@@ -296,7 +289,7 @@ export default {
   name: "Wizard",
   props: {
     title: String,
-    date: String,
+    bookingDate: String,
     facilityOptions: [],
     purpose: String,
     link: String,
@@ -311,76 +304,109 @@ export default {
       usetype: ["Academic"],
       fields: ["selected", "first_name", "email"],
       items: [],
-      urlFields: ["URL"],
+      urlFields: ["URL", { key: "actions", label: "Actions" }],
       urlItems: [],
       URLselected: [],
       cobookers: [],
       cal: "",
-      bookingUsage: ""
+      bookingUsage: "",
+      checkSelected: false
     };
   },
   methods: {
     onComplete: function() {
+      var num ;
       bookingRef.on("value", function(snapshot) {
-        console.log(bookingRef.key);
-        console.log(snapshot.val());
+        num =snapshot.numChildren();
+       
+       
       });
-      var snap;
-      bookingRef.limitToLast(1).on("child_added", function(childSnapshot) {
-        snap = childSnapshot.numChildren();
-        console.log(snap);
-      });
+      var cobookersInfo = this.cobookers;
+      var cobookersEmail = [];
+      var users;
+      for (var prop in cobookersInfo) {
+        userRef.on("value", function(snapshot) {
+          users = snapshot.val();
+        });
+        cobookersEmail.push(cobookersInfo[prop]["email"]);
+      }
 
-   var cobookersInfo = this.cobookers;
-   var cobookersEmail =[];
-    for( var prop in cobookersInfo){
-      console.log(cobookersInfo[prop]["email"])
-      cobookersEmail.push(cobookersInfo[prop]["email"])
-
-    }
-  
-      let start = moment(this.date + " " + this.from).format(
-        "DD-MMM-YYYY, hh:mm A"
-      );
-      let end = moment(this.date + " " + this.to).format(
-        "DD-MMM-YYYY, hh:mm A"
-      );
-      var key = snap + 1;
-     
-      // var newBookingRef = bookingRef.push();
-      bookingRef.child(key).set({
-        booking: this.facility,
-        bookingEnd: end,
-        bookingStart: start,
-        purpose: this.purpose,
-        useType: this.usetype,
-        bookingUsage: this.bookingUsage,
-        resourceLinks: this.urlItems,
-        coBookers: cobookersEmail,
-        status: "p"
-      });
-
+      var cobookersID = [];
+      for (var user in users) {
+   
+        for (var email in cobookersEmail) {
+          if (users[user]["email"] == cobookersEmail[email]) {
+            var data = {}
+            data[user] = false;
+            cobookersID.push(data);
+          }
+        }
+      }
 
       
+
+
+      let start = moment(this.bookingDate + " " + this.from).format(
+        "MM-DD-YYYY, hh:mm:ss A"
+      );
+      // let end = moment(this.bookingDate + " " + this.to).format(
+      //   "DD-MM-YYYY[T]HH:mm:ss"
+      // );
+      let end = moment(this.bookingDate + " " + this.to).format(
+        "MM-DD-YYYY, hh:mm:ss A"
+      );
+
+      if (
+        this.purpose == "" ||
+        this.usetype == "" ||
+        this.bookingUsage == "" ||
+        this.cobookers.length == 0
+      ) {
+        alert("you are required to fill up all the fields");
+
+      } else {
+    
+        if (this.checkSelected == true) {
+          console.log(num)
+          bookingRef.push({
+            booking: this.facility,
+            bookingStart: start,
+            bookingEnd: end,
+            booker: "Au1s5jaikCPns7AA1L7lMwJIVsg2",
+            purpose: this.purpose,
+            useType: this.usetype,
+            bookingUsage: this.bookingUsage,
+            resourceLinks: this.urlItems,
+            coBookers: cobookersID,
+            status: "p"
+          });
+          this.$router.push({
+            name: "Booking"
+          });
+        } else {
+          alert("Please agree to the Acknowledgement and Declaration");
+        }
+      }
     },
+
+    
     addUrl: function() {
-      console.log(this.link);
       var my_url = {
         URL: this.link
       };
 
       this.urlItems.push(my_url);
       this.link = "";
-      console.log(this.purpose);
     },
+
     save() {
       let start = moment(this.date + " " + this.from).format(
-        "DD-MMM-YYYY, hh:mm A"
+         "MM-DD-YYYY, hh:mm:ss A"
       );
       let end = moment(this.date + " " + this.to).format(
-        "DD-MMM-YYYY, hh:mm A"
+         "MM-DD-YYYY, hh:mm:ss A"
       );
-
+      
 
       this.$ics.addEvent(
         "ru-ru",
@@ -395,42 +421,60 @@ export default {
       );
 
       this.cal = this.$ics.calendar();
-      console.log(this.purpose);
+
       this.$ics.download(this.purpose);
     },
 
     onURLRowSelected(items) {
       this.selected = items;
-      var urlvalue = this.selected[0].URL;
+      var urlvalue = this.selected.URL;
 
       this.urlItems = this.urlItems.filter(function(el) {
         return el.URL != urlvalue;
       });
     },
+
     onRowSelected(items) {
+      userRef.on("value", function(snapshot) {
+        console.log(snapshot.val());
+      });
       this.cobookers = items;
-      console.log(this.cobookers);
     }
   },
 
   mounted() {
+    var tablerows;
     userRef.on("value", function(snapshot) {
-      console.log(snapshot.val());
+      tablerows = snapshot.val();
+      console.log(tablerows);
     });
-  },
 
+    for (var props in tablerows) {
+      this.items.push({
+        first_name: tablerows[props]["fullName"],
+        email: tablerows[props]["email"]
+      });
+    }
+
+    
+
+      
+  },
   watch: {
     usetype: function() {
-      if (this.usetype == "academic") {
-        this.items = [
-          { first_name: "Weiminn", email: "weiminn@sis.smu.edu.sg" },
-          { first_name: "Ram", email: "ramen@business.smu.edu.sg" },
-          { first_name: "Qilin", email: "qilin@sosc.smu.edu.sg" }
-        ];
-      } else {
-        this.items = [
-          { first_name: "Weiminn", email: "weiminn@sis.smu.edu.sg" }
-        ];
+      if (this.items.length == 0) {
+        var tablerows;
+        userRef.on("value", function(snapshot) {
+          tablerows = snapshot.val();
+          console.log(tablerows);
+        });
+
+        for (var props in tablerows) {
+          this.items.push({
+            first_name: tablerows[props]["fullName"],
+            email: tablerows[props]["email"]
+          });
+        }
       }
     }
   }
