@@ -250,8 +250,8 @@
             <!--  @click="selectSchool($event)" -->
             <path 
            
-            id="Connextion"
-		        name="Connextion"
+            id="Connexion"
+		        name="Connexion"
             d="M23196 18687 c-16 -12 -89 -500 -567 -3763 -302 -2062 -549 -3765
             -549 -3785 0 -20 6 -41 13 -47 6 -6 57 -13 112 -16 55 -3 2472 -8 5371 -12
             4909 -5 5272 -5 5287 11 10 9 17 30 17 47 0 16 -45 276 -100 576 -77 419 -104
@@ -450,7 +450,7 @@ export default {
         selectedFacility: null,
         facilityList:[],
         schools: ['SIS','SOA','SOE/SOSS','LKCSB'],
-        comingSoonSchools: ["LKS","SOL","Connextion","Admin"],
+        comingSoonSchools: ["LKS","SOL","Connexion","Admin"],
         defaultSchoolFacilities : {
                                     "SIS":{"Class": 1,"GSR": 13,"Seminar": 9},
                                     "SOA":{"Class": 1,"GSR": 19,"Seminar": 13},
