@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar v-show="this.$router.currentRoute.path != '/login' && this.$router.currentRoute.path != '/logout'"  type="dark" style="background-color:#102B72" >
+    <b-navbar v-show="this.$store.state.isLoggedIn"  type="dark" style="background-color:#102B72" >
       <img src="@/assets/smuIcon.png" class="mr-1" width="28px" alt=""> 
       <b-navbar-brand href="/"> MeetingGoWhere </b-navbar-brand>
 
@@ -39,7 +39,7 @@ export default {
   computed:{
     getPendingCount:function(){
       return 1;
-    }
+    },
   },
   mounted() {
     window.addEventListener('resize', () => {
