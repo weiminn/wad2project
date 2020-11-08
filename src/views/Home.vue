@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <b-row>
-      <b-col sm="6" md="4" lg="4">
+  <b-container fluid class="p-0">
+    <b-row class="justify-content-md-center"  no-gutters>
+      <b-col md="4" lg="4" class="mb-2" no-gutters >
 
         <b-dropdown id="FavouriteBookings" text="Book Again" class="mb-2 w-50"  menu-class="w-100" >
           <b-dropdown-item>SIS-GSR2.2</b-dropdown-item>
@@ -9,23 +9,16 @@
         </b-dropdown>
 
         <p class="text-left mb-1">When?</p> 
-        <b-form-datepicker id="datepicker" placeholder="Select Date" v-model="date" class="mb-2"></b-form-datepicker>
+        <b-form-datepicker @context="validateFomTimeEntered" value-as-date id="datepicker" placeholder="Select Date" v-model="date" class="mb-2"></b-form-datepicker>
 
         <vue-timepicker @close="validateFomTimeEntered" auto-scroll class="mr-2" input-width="100px" id="fromTime" format="HH:mm" v-model="fromTime" :minute-interval="30" hide-clear-button ></vue-timepicker>
         <vue-timepicker @close="validateToTimeEntered" auto-scroll input-width="100px" id="toTime" format="HH:mm" v-model="toTime" :minute-interval="30" hide-clear-button ></vue-timepicker><br>
 
-        <span class="float-left">Where? </span><br>
-        <div>
-        <!-- <div style="position:relative"> -->
-          <!-- <div class="float-left mt-2 w-75" style="position:absolute">
-            <b-form-select v-show="!windowWidth> 576" id="schoolsDDL" :options="schools"  variant="outline-secondary"  class="m-2 w-100">
-            </b-form-select><br>
-          </div> -->
-
-          <div class="testMapDiv p-2 rounded w-100">
+        <span class="float-left">Where?</span><br>
+      
+        <div class="smuMap p-2 rounded w-100">
           <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 5064.000000 5430.000000">
-
             <g transform="translate(0.000000,5430.000000) scale(0.100000,-0.100000)">
             <!--  @click="selectSchool($event)" -->
             <path 
@@ -59,9 +52,8 @@
             62 -62 193 -74 291 -26 l49 25 3 256 2 257 -42 17 c-49 20 -180 29 -220 16z 
             M45916 48858 c-37 -106 -136 -391 -136 -395 0 -2 75 -3 166 -3 129 0 165 3 162 
             13 -3 6 -40 111 -83 232 -43 121 -79 221 -80 223 -2 2 -14 -30 -29 -70z"/>
-            <!--  @click="selectSchool($event)" -->
             <path 
-
+            @click="selectSchool($event)"
             id="SOE_SOSS"
 		        name="SOE_SOSS"
             d="M307 37143 c-28 -7 -60 -80 -53 -122 3 -19 -53 -706 -125 -1526 -71
@@ -182,11 +174,10 @@
             -13 -94 -13 l-104 0 -218 288 c-121 158 -219 291 -219 295 0 5 98 134 217 288
             l217 279 89 0 c49 0 89 -2 89 -5z m-1461 -692 l1 -313 245 0 245 0 0 -75 0
             -75 -335 0 -335 0 0 570 0 569 83 3 82 3 6 -185 c4 -102 7 -326 8 -497z"/>
-            <!--  @click="selectSchool($event)" -->
             <path
-
-            id="SOB"
-		        name="SOB"
+            @click="selectSchool($event)"
+            id="LKCSB"
+		        name="LKCSB"
             d="M45201 25351 c-12 -12 -21 -26 -21 -31 0 -18 -391 -4035 -393 -4036
             -4 -2 -2893 -334 -2907 -334 -14 0 -18 57 -33 423 -22 520 -27 593 -42 614 -8
             10 -29 17 -61 18 -27 1 -634 -33 -1349 -75 -1091 -64 -1303 -75 -1316 -63 -26
@@ -194,24 +185,30 @@
             -3982 272 -4114 293 -4134 l21 -21 4728 612 c2601 337 4735 618 4742 623 8 6
             31 10 51 8 25 -1 42 3 53 16 14 16 58 783 339 5891 l322 5874 -20 20 c-20 19
             -113 25 -2274 143 -1240 68 -2267 126 -2284 129 -16 3 -44 8 -62 12 -24 5 -36
-            1 -52 -15z m-960 -7802 c232 -67 351 -284 336 -614 -9 -191 -56 -314 -160
-            -412 -121 -114 -295 -157 -480 -118 -186 39 -319 179 -362 381 -19 89 -19 298
-            0 386 28 132 103 251 202 319 118 81 305 105 464 58z m-911 -10 l65 -24 3 -74
-            c3 -67 1 -73 -15 -68 -119 39 -168 48 -253 50 -111 2 -160 -16 -197 -72 -44
-            -66 -24 -174 40 -216 13 -8 84 -35 157 -60 72 -24 151 -55 174 -69 64 -37 114
-            -94 133 -151 23 -67 22 -184 -1 -254 -26 -75 -101 -151 -181 -181 -123 -47
-            -363 -35 -484 23 l-46 22 -3 68 c-2 41 1 67 7 67 6 0 46 -12 88 -26 91 -31
-            261 -44 329 -25 86 23 126 79 126 174 0 99 -40 135 -215 193 -184 61 -251 104
-            -291 188 -41 87 -40 220 3 304 30 59 104 119 175 142 89 29 293 23 386 -11z
-            m1945 0 c63 -12 147 -59 175 -99 46 -64 63 -179 39 -263 -14 -51 -73 -115
-            -131 -142 l-47 -22 52 -16 c132 -42 196 -144 185 -292 -9 -107 -68 -199 -158
-            -245 -84 -43 -141 -50 -397 -50 l-243 0 0 570 0 570 168 2 c193 4 287 0 357
-            -13z M43943 17409 c-66 -25 -133 -98 -164 -177 -31 -77 -39 -331 -15 -435
-            43 -183 134 -261 306 -262 105 0 158 23 225 97 61 68 85 147 92 298 15 337
-            -92 501 -326 499 -41 0 -86 -8 -118 -20z M44930 17234 l0 -177 128 7 c195 10 253 
-            48 260 169 4 82 -17 124 -78 155 -39 19 -59 22 -177 22 l-133 0 0 -176z M45008 
-            16932 l-78 -3 0 -189 0 -190 128 0 c157 0 217 15 261 65 35 40 45 83 39 161 -11 
-            127 -101 167 -350 156z"/>
+            1 -52 -15z m-811 -7792 c25 -5 64 -17 88 -26 l42 -16 0 -73 c0 -41 -2 -74 -3
+            -74 -2 0 -29 9 -60 19 -31 11 -93 25 -136 31 -209 31 -360 -56 -406 -235 -18
+            -71 -21 -298 -4 -377 26 -120 83 -199 172 -239 46 -21 67 -24 172 -24 105 1
+            130 4 196 28 41 15 79 27 82 27 4 0 7 -31 7 -69 l0 -69 -51 -22 c-128 -55
+            -339 -64 -464 -20 -139 48 -234 147 -281 293 -22 69 -28 106 -32 228 -7 220
+            19 334 102 446 50 68 127 124 211 154 99 35 253 43 365 18z m830 -20 l65 -24
+            3 -74 c3 -67 1 -73 -15 -68 -119 39 -168 48 -253 50 -111 2 -160 -16 -197 -72
+            -44 -66 -24 -174 40 -216 13 -8 84 -35 157 -60 72 -24 151 -55 174 -69 64 -37
+            114 -94 133 -151 23 -67 22 -184 -1 -254 -26 -75 -101 -151 -181 -181 -123
+            -47 -363 -35 -484 23 l-46 22 -3 68 c-2 41 1 67 7 67 6 0 46 -12 88 -26 91
+            -31 261 -44 329 -25 86 23 126 79 126 174 0 99 -40 135 -215 193 -184 61 -251
+            104 -291 188 -41 87 -40 220 3 304 30 59 104 119 175 142 89 29 293 23 386
+            -11z m-1540 15 c0 -3 -90 -122 -200 -264 -110 -142 -203 -265 -206 -274 -4
+            -11 265 -384 429 -593 7 -10 -13 -13 -94 -13 l-104 0 -213 280 c-117 154 -215
+            286 -218 294 -4 10 73 117 212 296 l218 280 88 0 c48 0 88 -3 88 -6z m2355
+            -15 c63 -12 147 -59 175 -99 46 -64 63 -179 39 -263 -14 -51 -73 -115 -131
+            -142 l-47 -22 52 -16 c132 -42 196 -144 185 -292 -9 -107 -68 -199 -158 -245
+            -84 -43 -141 -50 -397 -50 l-243 0 0 570 0 570 168 2 c193 4 287 0 357 -13z
+            m-3815 -484 l0 -495 245 0 245 0 0 -75 0 -75 -335 0 -335 0 0 570 0 570 90 0
+            90 0 0 -495z m820 -75 l0 -570 -90 0 -90 0 0 570 0 570 90 0 90 0 0 -570z
+            M45690 17234 l0 -177 128 7 c195 10 253 48 260 169 4 82 -17 124 -78
+            155 -39 19 -59 22 -177 22 l-133 0 0 -176z M45768 16932 l-78 -3 0 -189 0 
+            -190 128 0 c157 0 217 15 261 65 35 40 45 83 39 161 -11 127 -101 167 -350 
+            156z"/>
             <path 
             @click="selectSchool($event)"
             id="SOA"
@@ -312,38 +309,78 @@
             -92 501 -326 499 -41 0 -86 -8 -118 -20z"/>
             </g>
           </svg>
-
         </div>
-
-
-
-
-  
-          <!-- <b-img-lazy fluid src="@/assets/WAD2_HomePageRefined.png" usemap="#image-map" class="p-2 mb-5 rounded" style="background-color:#C2C2C2"/> -->
-        </div>
-
-        <!-- <map name="image-map" id="myMap">
-          <area target="" class="school" id="SOE/SOSS" @click="selectSchool($event)" alt="SOE/SOSS" title="SOE/SOSS" coords="36,1731,1235,1740,1190,2657,353,2639,367,2460,76,2447,85,2040,4,2044" shape="poly">
-          <area target="" class="school" id="SIS" @mouseover="selectSchool($event)" alt="SIS" title="SIS" coords="1512,1740,2407,1744,2420,1977,2331,2080,2281,2066,2281,2116,2246,2125,2161,2397,2120,2411,2076,2393,2018,2527,1973,2572,1924,2612,1865,2643,1767,2670,1727,2661,1655,2630,1597,2581,1561,2523,1534,2438,1467,2438,1521,2308,1575,2308,1575,2268,1521,2259,1463,1977,1508,1959" shape="poly">
-          <area target="" class="school" id="LKS" @click="selectSchool($event)" alt="LKS" title="LKS" coords="2859,2196,2917,2236,2984,2263,3046,2290,3109,2304,3163,2308,3216,2299,3270,2290,3301,2272,3512,2268,3445,2974,3324,2961,3319,3024,3136,2948,3123,2898,2970,2894,2944,2916,2944,2952,2845,2974,2854,2916,2783,2952,2720,2961,2662,2961,2630,2952,2599,2885,2572,2787,2572,2711,2581,2630,2604,2550,2626,2469,2666,2380,2720,2299,2791,2232,2827,2196" shape="poly">
-          <area target="" class="school" id="SOA" @click="selectSchool($event)" alt="SOA" title="SOA" coords="2371,3373,2443,3337,2536,3314,2621,3310,2720,3332,2760,3341,2738,3404,2787,3422,2805,3377,2876,3399,2894,3341,3105,3373,3100,3426,3149,3444,3149,3386,3418,3381,3458,4008,3167,4030,3163,3838,3091,3860,3078,3954,2899,3967,2832,3941,2751,3900,2684,3865,2613,3815,2541,3748,2483,3690,2425,3623,2393,3574,2353,3511" shape="poly">
-          <area target="" class="school" id="Connex" @click="selectSchool($event)" alt="Connex" title="Connex" coords="2326,3565,2375,3654,2438,3726,2514,3797,2595,3869,2684,3936,2783,3976,2872,4026,2966,4048,3055,4084,3158,4128,3167,4204,3270,4213,3284,4321,2214,4330" shape="poly">
-          <area target="" class="school" id="SOL" @click="selectSchool($event)" alt="SOL" title="SOL" coords="1870,4616,3503,4531,3547,4781,2912,4875,2966,5354,2827,5372,2796,5336,2407,5412,2398,5300,2295,5408,2237,5426,2179,5426,2107,5412,2031,5372,1964,5309,1937,5206,1727,5027" shape="poly">
-          <area target="" class="school" id="SOB" @click="selectSchool($event)" alt="SOB" title="SOB" coords="3901,3261,4178,3247,4183,3346,4491,3310,4527,2903,4983,2930,4921,4097,3968,4227" shape="poly">
-          <area target="" class="school" id="Admin" @click="selectSchool($event)" alt="Admin" title="Admin" href="" coords="4505,13,5060,9,5055,353,5024,376,5010,1507,4657,1512,4652,872,4550,886,4505,823" shape="poly">
-        </map> -->
       </b-col>
-      <!-- v-show="windowWidth > 576" -->
-      <b-col sm="6" md="5" lg="5" class="text-left"> 
 
-        <div v-if="this.selectedSchools == null || this.selectedSchools.length == 0" class="mt-2" placeholder="Select School First">
+      <b-col md="1" lg="1"></b-col>
+
+      <b-col md="5" lg="5" align-self="center" class="text-left"> 
+
+        <div v-if="this.selectedSchools == null || this.selectedSchools.length == 0" >
+
+          <p class="text-center"> Available Facilities on <b><span v-if='date != ""'>{{ date.format("DD-MM-YYYY") }}</span></b>
+          from <b>{{fromTime.HH}}{{fromTime.mm}}hrs</b> to <b>{{toTime.HH}}{{toTime.mm}}hrs:</b> </p>
+
+          <div v-if="!currentAvailableFacilities">
+            <div v-for='num in 5' :key="num">
+              <b-skeleton animation="fade" ></b-skeleton>
+              <b-skeleton animation="fade" ></b-skeleton>
+              <b-skeleton animation="fade" ></b-skeleton>
+              <b-skeleton animation="fade" ></b-skeleton>
+              <br>
+            </div>
+          </div>
+          <div v-else class="d-flex justify-content-around">
+            <div>
+                <div v-for="school in schools" :key="school">
+                  <table class="table table-sm table-striped table-bordered" >
+                    <thead>
+                      <th>{{school}}</th>
+                      <th></th>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Classrooms: </td>
+                        <td >
+                          {{currentAvailableFacilities[school]["Class"]}}/{{defaultSchoolFacilities[school]["Class"]}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>GSRs: </td>
+                        <td>{{currentAvailableFacilities[school]["GSR"]}}/{{defaultSchoolFacilities[school]["GSR"]}}</td>
+                      </tr>
+                      <tr>
+                        <td>Seminar Rooms: </td>
+                        <td>{{currentAvailableFacilities[school]["Seminar"]}}/{{defaultSchoolFacilities[school]["Seminar"]}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+              <div v-for="school in comingSoonSchools" :key="school">
+                  <table class="table table-sm table-striped table-bordered ml-1" v-if="currentAvailableFacilities">
+                    <thead>
+                      <th>{{school}}</th>
+                      <!-- <th></th> -->
+                    </thead>
+                    <tbody>
+                      <tr v-for="num in 3" :key="num">      
+                        <td>
+                          COMING SOON..
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+          </div>
+
         </div>
-
 
         <div v-else>
           <div class="mt-2">
             <span>Select Floor</span> 
-            <!-- <multiselect v-else class="mt-2" placeholder="Select A School First" ></multiselect> -->
             <multiselect class="mt-2" @close="rePopulate()" @remove="rePopulate()" v-model="selectedFloor" placeholder="Select Floor" label="floor" track-by="value" :options="floors" :searchable="false" :show-labels="false" :multiple="true" :taggable="true" :close-on-select="false" @tag="addTagFloors"></multiselect>
           </div>
 
@@ -356,7 +393,7 @@
             <b>Facility List:</b>
 
             <div class="mb-1">
-              <b-button v-show="!disableSearch" id="noneButton" variant="outline-secondary" v-model="allSelected" @click="toggleAll">
+              <b-button id="noneButton" variant="outline-secondary" v-model="allSelected" @click="toggleAll">
                 {{ allSelected ? 'Remove All' : 'Select All' }}
               </b-button>
             </div>
@@ -373,13 +410,12 @@
 
       </b-col>
     </b-row>
+  </b-container>
     
-  </div>
 </template>
 
 
 <script>
-//import imageMapResize from 'image-map-resizer'
 import VueTimepicker from 'vue2-timepicker/src/vue-timepicker.vue';
 import Multiselect from 'vue-multiselect';
 
@@ -387,6 +423,7 @@ import app from "../firebase.service.js";
 
 const db = app.database();
 const school = db.ref("school");
+const bookings = db.ref("booking");
 
 export default {
   name: "Home",
@@ -412,16 +449,33 @@ export default {
         facilityType:[],
         selectedFacility: null,
         facilityList:[],
-        schools: ['Admin','Connextion','SOA','SOB','SOE/SOSS','SOL','SIS','LKS'],
+        schools: ['SIS','SOA','SOE/SOSS','LKCSB'],
+        comingSoonSchools: ["LKS","SOL","Connextion","Admin"],
+        defaultSchoolFacilities : {
+                                    "SIS":{"Class": 1,"GSR": 13,"Seminar": 9},
+                                    "SOA":{"Class": 1,"GSR": 19,"Seminar": 13},
+                                    "SOE/SOSS":{"Class": 7,"GSR": 42,"Seminar": 28},
+                                    "LKCSB":{"Class": 5,"GSR": 62,"Seminar": 20}
+                                  },
+        // comingSoonFacilities    : {
+        //                             "LKS":{"Class": "Unavail","GSR": "Unavail","Seminar": "Unavail"},
+        //                             "SOL":{"Class": "Unavail","GSR": "Unavail","Seminar": "Unavail"},
+        //                             "Connextion":{"Class": "Unavail","GSR": "Unavail","Seminar": "Unavail"},
+        //                             "Admin":{"Class": "Unavail","GSR": "Unavail","Seminar": "Unavail"}
+        //                           },
+        currentAvailableFacilities: null
+
       }
   },
-  components: {VueTimepicker,Multiselect},
+  components: {
+    VueTimepicker,
+    Multiselect
+  },
   mounted() {
-    //imageMapResize();
     this.displayTime();
+    this.getBookingAvailability();
     window.addEventListener('resize', () => {
       this.windowWidth = window.innerWidth;
-      //console.log(this.windowWidth);
     });
   },
   methods: {
@@ -497,6 +551,8 @@ export default {
         }  
         this.toTime.mm = this.fromTime.mm;
       }
+
+      this.getBookingAvailability();
     },
     validateToTimeEntered: function(){
       let toTimeHour = parseInt(this.toTime.HH);
@@ -526,60 +582,9 @@ export default {
         }  
         this.fromTime.mm = this.toTime.mm;
       }
+
+      this.getBookingAvailability();
     },
-    // populateFacilities: function(selectedSchoolsArray){
-    //   console.log(selectedSchoolsArray);
-
-    //   school.once("value").then((snapshot) => {
-    //     let data = snapshot.val();
-
-    //     let mergedFacilityList = [];
-    //     this.floors = [];
-    //     this.facilityType = [];
-
-    //     for(let SelectedSchool of selectedSchoolsArray){
-    //         //populate floors
-    //         for (let floor of data[SelectedSchool].Floors){
-    //           let doPush = true;
-    //           for(let obj of this.floors){
-    //             if(obj.floor == floor){
-    //               doPush = false;
-    //             }
-    //           }
-    //           if(doPush){
-    //             this.floors.push({floor: floor, value:floor});
-    //           }
-    //         }
-
-    //         //populate facility types
-    //         for (let type of data[SelectedSchool].FacilityType){
-    //           let doPush = true;
-    //           for(let obj of this.facilityType){
-    //             if(obj.type == type){
-    //               doPush = false;
-    //             } 
-    //           }
-    //           if(doPush){
-    //             this.facilityType.push({type: type, value:type})
-    //           }
-    //         }
-
-           
-
-    //         for(let facilityType in data[SelectedSchool].FacilityList){
-    //           for(let floors in data[SelectedSchool].FacilityList[facilityType]){
-    //             for (let facility of data[SelectedSchool].FacilityList[facilityType][floors] ){
-    //               mergedFacilityList.push(facility);
-    //             }
-    //           }
-    //         }
-    //     }
-             
-    //     this.facilityList = mergedFacilityList;
-    //     this.allSelected = false;
-    //     this.toggleAll();
-    //   });
-    // },
     addTagFloors (newTag) {
       const tag = {
         name: newTag,
@@ -740,15 +745,61 @@ export default {
         event.target.style.fill = "#102B72";
         this.selectedSchools.push(selectedSchool);
       }
-     
-      // console.log(this.selectedSchools);
-
     },
     sendFacilities: function(){
       let json = [{fromTime : this.fromTime.HH+":"+this.fromTime.mm},
                   {toTime : this.toTime.HH+":"+this.toTime.mm},
                   {selectedFacilities: this.selectedFacility}]
       console.log(json);
+    },
+    getBookingAvailability: function(){
+
+      let currentAvailableFacilities = JSON.parse(JSON.stringify(this.defaultSchoolFacilities));
+
+      // console.log(currentAvailableFacilities);
+
+      bookings.once("value").then((snapshot) => {
+          let data = snapshot.val();
+
+          let fromDateTime = new Date(this.date);
+          let toDateTime = new Date(this.date);
+
+          fromDateTime.setHours( this.fromTime.HH,this.fromTime.mm,0,0 );
+          toDateTime.setHours( this.toTime.HH,this.toTime.mm,0,0 );
+
+          Object.values(data).filter((booking)=>{
+            //console.log(booking);
+
+            let bookingStartTime = new Date(booking.bookingStart);
+            let bookingEndTime = new Date(booking.bookingEnd);
+            
+            // Only proceed if its the same date
+            if(bookingStartTime.toLocaleDateString() === fromDateTime.toLocaleDateString()){
+              console.log("Yo same date");
+
+              //Checks to see if there is an overlap between requested time and booking time
+              if( bookingEndTime.getTime() > fromDateTime.getTime()  &&
+                    toDateTime.getTime() > bookingStartTime.getTime()){
+
+                console.log("Collision");
+                let school = booking.booking.split(" ")[0];
+                let facilityType = booking.booking.split(" ")[1];
+
+  
+                currentAvailableFacilities[school][facilityType]--;  
+              }else{
+                  console.log("No Collision");
+              }
+              console.log(this.currentAvailableFacilities);
+              console.log("YOOO THIS->" + this.defaultSchoolFacilities);
+              console.log(this.defaultSchoolFacilities);
+
+            }
+
+            this.currentAvailableFacilities = currentAvailableFacilities;
+
+          })
+      })
     }
   },
   watch:{
@@ -758,7 +809,6 @@ export default {
         this.floors = [];
         this.facilityType = [];
         this.facilityList = [];
-        // console.log(this.disableSearch);
       }else{
         this.rePopulate();
         this.disableSearch = false;
@@ -788,37 +838,47 @@ export default {
     background:#C2C2C2;
   }
 
-  /* .school:focus{
-    outline-color:#00BFFF;
-    box-shadow: 0px 9px 0px rgba(0, 161,214,1);
-  } */
-
-  .testMapDiv{
-    width:40%;
+  .smuMap{
     background-color:#C2C2C2
   }
 
-  .testMapDiv path{
+  .smuMap path{
     fill:#6D757D;
   }
 
   /* @media (hover: hover) and (pointer: fine) {
     #SIS:hover,
     #SOA:hover,
-    #SOB:hover,
     #SOL:hover,
     #Admin:hover,
     #LKS:hover,
-    #SOE_SOSS:hover,
     #Connextion:hover{
       fill:#102B72 !important;
     }
   } */
 
-   @media (hover: hover) and (pointer: fine) {
-    #SIS:hover,
-    #SOA:hover{
-      fill:#102B72 !important;
+  @media (hover: hover) and (pointer: fine) {
+    #SIS:active:hover,
+    #SOA:hover:active,
+    #SOE_SOSS:hover:active,
+    #LKCSB:hover(:active){
+       fill:#4c4d50 !important;
     }
   }
+
+    @media (hover: hover) and (pointer: fine) {
+    #SIS:hover:not(:active),
+
+    #SOA:hover:not(:active),
+
+    #SOE_SOSS:hover:not(:active),
+
+    #LKCSB:hover:not(:active){
+      fill:#1741ac !important;
+     
+    }
+
+    
+  }
+
 </style>
