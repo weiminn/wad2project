@@ -333,12 +333,18 @@ export default {
 
       var cobookersID = [];
       for (var user in users) {
+   
         for (var email in cobookersEmail) {
           if (users[user]["email"] == cobookersEmail[email]) {
-            cobookersID.push(user);
+            var data = {}
+            data[user] = false;
+            cobookersID.push(data);
           }
         }
       }
+
+      
+
 
       let start = moment(this.bookingDate + " " + this.from).format(
         "MM-DD-YYYY, hh:mm:ss A"
