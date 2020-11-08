@@ -1,12 +1,23 @@
 <template>
-  <div class="app">
-    <div class="padding-top-60">
-      <h5>MeetingGoWhere</h5>
-      <div id="firebase-container"></div>
+  <div class="app" style="position:relative">
+
+    <div style="background-color:#102B72; margin-top:-30px;" class="row align-items-center" >
+
+      <div class="container">
+
+        <img style="width:350px;z-index: 1;position:absolute;top: 0; left: 0; bottom: 0; right: 0;margin:auto" src="@/assets/smuIcon.png" alt="">
+      
+        <div class="container col-10 col-sm-9 col-md-7 col-lg-5 pt-5 pb-5 shadow-lg loginContainer mx-auto d-block">
+
+          <div>
+            <h5>MeetingGoWhere</h5>
+            <div id="firebase-container"></div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
-    
-    
-    
   </div>
 </template>
 
@@ -46,7 +57,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .padding-top-60 {
   padding-top: 60px;
+}
+.loginContainer{
+  border-radius: 7.5px;
+  background-color: white;
+  opacity: 0.95;
+  z-index: 10;
+}
+.row {
+  height: 100vh;
 }
 </style>

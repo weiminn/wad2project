@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="p-0">
     <b-row class="justify-content-md-center"  no-gutters>
-      <b-col md="4" lg="4" class="mb-2" no-gutters >
+      <b-col md="4" lg="4" class="mb-4" no-gutters >
 
         <b-dropdown id="FavouriteBookings" text="Book Again" class="mb-2 w-50"  menu-class="w-100" >
           <b-dropdown-item>SIS-GSR2.2</b-dropdown-item>
