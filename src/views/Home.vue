@@ -8,13 +8,13 @@
           <b-dropdown-item>SIS-GSR2.3</b-dropdown-item>
         </b-dropdown>
 
-        <p class="text-left mb-1">When?</p> 
+        <p class="text-left mb-1"> Step1: Select When?</p> 
         <b-form-datepicker @context="validateFomTimeEntered" value-as-date id="datepicker" placeholder="Select Date" v-model="date" class="mb-2"></b-form-datepicker>
 
         <vue-timepicker @close="validateFomTimeEntered" auto-scroll class="mr-2" input-width="100px" id="fromTime" format="HH:mm" v-model="fromTime" :minute-interval="30" hide-clear-button ></vue-timepicker>
         <vue-timepicker @close="validateToTimeEntered" auto-scroll input-width="100px" id="toTime" format="HH:mm" v-model="toTime" :minute-interval="30" hide-clear-button ></vue-timepicker><br>
 
-        <span class="float-left">Where?</span><br>
+        <span class="float-left">Step2: Select Where?</span><br>
       
         <div class="smuMap p-2 rounded w-100">
           <svg version="1.0" xmlns="http://www.w3.org/2000/svg"

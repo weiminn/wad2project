@@ -52,7 +52,7 @@ export default {
       ui.start("#firebase-container", uiConfig);
     }
     
-  },
+  }
 };
 </script>
 
