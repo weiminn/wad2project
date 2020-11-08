@@ -23,7 +23,7 @@ export default {
     mounted(){
       this.user = this.$store.state.userInfo;
       this.userID = this.user.userID;
-      console.log(this.user);
+     
       this.loadBookings(bookingRef,this.user);
     },
   components: {
@@ -62,6 +62,17 @@ export default {
           dataFormatted = dataFormatted.filter(val => {
             return val != null
           })
+
+            dataFormatted = dataFormatted.filter(val => {
+            return val.status != "P" 
+          })
+
+             dataFormatted = dataFormatted.filter(val => {
+            return val.status != "p" 
+          })
+
+          console.log(dataFormatted)
+
 
 
           return dataFormatted
