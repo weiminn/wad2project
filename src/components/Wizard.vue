@@ -338,7 +338,7 @@ export default {
           if (users[user]["email"] == cobookersEmail[email]) {
             var data = {}
             data[user] = false;
-            cobookersID.push(data);
+            cobookersID = {...data, ...cobookersID};
           }
         }
       }
@@ -355,6 +355,20 @@ export default {
       let end = moment(this.bookingDate + " " + this.to).format(
         "MM-DD-YYYY, hh:mm:ss A"
       );
+      console.log(start)
+      console.log(end)
+      console.log(this.to)
+
+      var formattedhourto = moment(this.to, "HH:mm:ss").format("HH");
+      var formattedhourfrom = moment(this.from, "HH:mm:ss").format("HH");
+      var formattedminto = moment(this.to, "HH:mm:ss").format("mm");
+      var formattedminfrom = moment(this.from, "HH:mm:ss").format("mm");
+      
+      var timedifference = ((formattedhourto-formattedhourfrom)*60) + (formattedminfrom - formattedminto)
+      var totalCredits = (timedifference/30) * 15
+      
+
+      
 
       if (
         this.purpose == "" ||
@@ -378,7 +392,8 @@ export default {
             bookingUsage: this.bookingUsage,
             resourceLinks: this.urlItems,
             coBookers: cobookersID,
-            status: "p"
+            status: "p",
+            credits:totalCredits
           });
           this.$router.push({
             name: "Booking"
@@ -455,6 +470,8 @@ export default {
         email: tablerows[props]["email"]
       });
     }
+
+    
 
     
 
