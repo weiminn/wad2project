@@ -6,7 +6,7 @@
     <tab-content title="Booking Details" icon="ti-list">
       <div class="container">
         <b-row class="d-flex justify-content-center" style="margin-top:'30px'">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md">
               <b-input-group-prepend is-text>
                 <b-icon icon="calendar3"></b-icon>
@@ -23,7 +23,7 @@
         </b-row>
 
         <b-row class="d-flex justify-content-center">
-          <b-col sm="6" md="6" lg="3">
+          <b-col sm="6" md="6" lg="4">
             <b-input-group prepend="From" size="md">
               <b-form-input
                 type="time"
@@ -33,7 +33,7 @@
               ></b-form-input>
             </b-input-group>
           </b-col>
-          <b-col sm="6" md="6" lg="3">
+          <b-col sm="6" md="6" lg="4">
             <b-input-group prepend="To" size="md">
               <b-form-input
                 type="time"
@@ -52,7 +52,7 @@
           </b-row>
         </div>
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Facility">
               <b-form-select
                 name="facility"
@@ -68,7 +68,7 @@
         </b-row>
 
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Purpose">
               <b-form-input
                 v-model="purpose"
@@ -82,7 +82,7 @@
         </b-row>
 
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Use Type">
               <b-form-select
                 name="usetype"
@@ -101,7 +101,7 @@
         </b-row>
 
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Booking Usage">
               <b-form-select
                 v-model="bookingUsage"
@@ -132,9 +132,9 @@
 
     <tab-content title="Additional Info" icon="ti-info-alt">
       <div id="cobookers">
-        <h3>Add Co-bookers</h3>
+        <h5>Add Co-bookers</h5>
         <b-row class="d-flex justify-content-center">
-          <b-col sm="12" md="6" lg="6">
+          <b-col sm="12" md="12" lg="9">
             <b-input-group size="md">
               <b-input-group-prepend is-text>
                 <b-icon icon="search"></b-icon>
@@ -155,7 +155,7 @@
         </b-row>
         <div class="d-flex justify-content-center">
           <b-table
-            class="col-md-6 col-lg-6 col-sm-12"
+            class="col-md-12 col-lg-9 col-sm-12"
             ref="selectedTable"
             ef="selectableTable"
             selectable
@@ -185,9 +185,9 @@
       </div>
 
       <div id="resources">
-        <h3>Resource</h3>
+        <h5>Resource</h5>
         <b-row class="d-flex justify-content-center">
-          <b-col sm="12" md="6" lg="6">
+          <b-col sm="12" md="12" lg="9">
             <b-input-group size="md">
               <b-input-group-prepend is-text>
                 <b-icon icon="link-45deg"></b-icon>
@@ -204,7 +204,7 @@
 
         <div class="d-flex justify-content-center">
           <b-table
-            class="col-md-6 col-lg-6 col-sm-12"
+            class="col-md-12 col-lg-9 col-sm-12"
             ref="selectableURLTable"
             :items="urlItems"
             :fields="urlFields"
@@ -226,7 +226,7 @@
     <tab-content title="Acknowledgement" icon="ti-check-box">
       <div>
         <b-row class="d-flex justify-content-center">
-          <b-col sm="12" md="6" lg="6">
+          <b-col sm="12" md="12" lg="10">
             <b-jumbotron
               style="text-align:center"
               lead="Acknowledgement and declaration"
@@ -559,4 +559,13 @@ h3 {
 ul {
   text-align: justify;
 }
+
+.vue-form-wizard .navbar .navbar-nav>li>a.wizard-btn, .vue-form-wizard .wizard-btn {
+  min-width: 100px;
+}
+
+.vue-form-wizard .wizard-icon-circle.tab_shape{
+  min-width: 80px;
+}
+
 </style>

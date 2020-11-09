@@ -6,6 +6,7 @@
     :facility="facility"
     :from="from"
     :to="to"
+    :subtitle ="subtitle"
   />
 </template>
 
@@ -44,6 +45,7 @@ export default {
     return {
       selectedTiming: this.$route.params.selectedTiming,
       title: "Facility Booking",
+      subtitle:"",
       bookingDate: "",
       facilityOptions: [],
       facility: "",
