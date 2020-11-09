@@ -65,7 +65,7 @@ export default {
     }
   },
   methods: {
-    accept: function(evt, details) {
+    accept: async function(evt, details) {
       let booking = evt.target.dataset.booking;
       let bookingTime = evt.target.dataset.booking_time;
       switch (this.status) {
@@ -79,8 +79,10 @@ export default {
           var userInfo = this.$store.getters.getUserInfo
           var userID = userInfo.userID;
           this.$set(details.coBookers, userID, true);
-
+          
           var status = Object.values(details.coBookers).every(v => v === true) ? 'A' : 'P'
+          await this.deductCredit();
+
           this.$set(details, "status", status);
           
 
@@ -93,10 +95,31 @@ export default {
 
           bookingsRef.child(details.id).update(data);
           this.$router.go()
+          
+          
           break;
         default:
           break;
       }
+    },
+
+    deductCredit: async function(){
+      let credits = Math.ceil(this.bookingDetails.credits / (Object.keys(this.coBookers).length + 1 ))
+
+      let userIDs = Object.keys(this.coBookers);
+      userIDs.push(this.booker)
+
+      await Promise.all(userIDs.map(async (val) => {
+        let userInfo = await userRef.child(val).once("value").then(function(snapshot) {
+            let data = snapshot.val();
+            return data
+        }).then(res => {return res})  
+
+        userRef.child(val).update({...userInfo, credits : userInfo.credits - credits});
+      }))
+
+      
+
     },
     isDisabled: function(status) {
       switch (status) {

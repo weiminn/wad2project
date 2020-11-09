@@ -69,7 +69,7 @@
             <b-input-group size="md" prepend="Purpose">
               <b-form-input
                 v-model="purpose"
-                id="link"
+                id="purpose"
                 :value="purpose"
                 placeholder="Enter purpose of booking"
                 required
@@ -291,8 +291,6 @@ export default {
     title: String,
     bookingDate: String,
     facilityOptions: [],
-    purpose: String,
-    link: String,
     from: String,
     to: String,
     facility: String
@@ -306,6 +304,8 @@ export default {
       items: [],
       urlFields: ["URL", { key: "actions", label: "Actions" }],
       urlItems: [],
+      purpose: "",
+      link: "",
       URLselected: [],
       cobookers: [],
       cal: "",
@@ -314,7 +314,7 @@ export default {
     };
   },
   methods: {
-    onComplete: function() {
+    onComplete: async function() {
       var num ;
       bookingRef.on("value", function(snapshot) {
         num =snapshot.numChildren();
@@ -324,6 +324,7 @@ export default {
       var cobookersInfo = this.cobookers;
       var cobookersEmail = [];
       var users;
+      var booker = this.$store.state.userInfo.userID;
       for (var prop in cobookersInfo) {
         userRef.on("value", function(snapshot) {
           users = snapshot.val();
@@ -366,6 +367,7 @@ export default {
       
       var timedifference = ((formattedhourto-formattedhourfrom)*60) + (formattedminfrom - formattedminto)
       var totalCredits = (timedifference/30) * 15
+      // totalCredits = 105
       
 
       
@@ -382,28 +384,56 @@ export default {
     
         if (this.checkSelected == true) {
           console.log(num)
-          bookingRef.push({
-            booking: this.facility,
-            bookingStart: start,
-            bookingEnd: end,
-            booker: "Au1s5jaikCPns7AA1L7lMwJIVsg2",
-            purpose: this.purpose,
-            useType: this.usetype,
-            bookingUsage: this.bookingUsage,
-            resourceLinks: this.urlItems,
-            coBookers: cobookersID,
-            status: "p",
-            credits:totalCredits
-          });
-          this.$router.push({
-            name: "Booking"
-          });
+          let isValid = await this.isSufficientCredit(totalCredits, cobookersID, booker)
+          if (isValid){
+            bookingRef.push({
+              booking: this.facility,
+              bookingStart: start,
+              bookingEnd: end,
+              booker: booker,
+              purpose: this.purpose,
+              useType: this.usetype,
+              bookingUsage: this.bookingUsage,
+              resourceLinks: this.urlItems,
+              coBookers: cobookersID,
+              status: "p",
+              credits:totalCredits
+            });
+            this.$router.push({
+              name: "Booking"
+            });
+          }else{
+            alert("Booker/Co-Booker(s) does not have enough credits")
+          }
+          
         } else {
           alert("Please agree to the Acknowledgement and Declaration");
         }
       }
     },
 
+    isSufficientCredit: async function(totalCredits, cobookersID, booker){
+
+      let credits = Math.ceil(totalCredits / (Object.keys(cobookersID).length + 1 ))
+
+      let userIDs = Object.keys(cobookersID);
+      userIDs.push(booker);
+
+      let userInfos = await Promise.all(userIDs.map(async (val) => {
+        let userInfo = await userRef.child(val).once("value").then(function(snapshot) {
+            let data = snapshot.val();
+            return data
+        }).then(res => {return res})  
+        
+        return userInfo
+      }))
+
+      let isValid = userInfos.every((val) => {
+        return val.credits >= credits
+      })
+
+      return isValid;
+    },
     
     addUrl: function() {
       var my_url = {
@@ -461,14 +491,17 @@ export default {
     var tablerows;
     userRef.on("value", function(snapshot) {
       tablerows = snapshot.val();
-      console.log(tablerows);
+      // console.log(tablerows);
     });
 
     for (var props in tablerows) {
-      this.items.push({
-        first_name: tablerows[props]["fullName"],
-        email: tablerows[props]["email"]
-      });
+      if (this.$store.state.userInfo.userID != props){
+        this.items.push({
+          first_name: tablerows[props]["fullName"],
+          email: tablerows[props]["email"]
+        });
+      }
+
     }
 
     
@@ -487,10 +520,12 @@ export default {
         });
 
         for (var props in tablerows) {
-          this.items.push({
-            first_name: tablerows[props]["fullName"],
-            email: tablerows[props]["email"]
-          });
+          if (this.$store.state.userInfo.userID != props){
+            this.items.push({
+              first_name: tablerows[props]["fullName"],
+              email: tablerows[props]["email"]
+            });
+          }
         }
       }
     }
