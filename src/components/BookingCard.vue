@@ -129,7 +129,7 @@ export default {
     },
   },
   async created() {
-    this.coBookers_names = await Promise.all(this.coBookers.map(async (val) => {
+  this.coBookers_names = await Promise.all(Object.keys(this.coBookers).map(async (val) => {
       let fullName = await userRef.child(val).once("value").then(function(snapshot) {
           let data = snapshot.val();
           return data.fullName
@@ -142,7 +142,6 @@ export default {
       let data = snapshot.val();
       return data.fullName
     }).then(res => {return res})
-
   }
 };
 </script>
