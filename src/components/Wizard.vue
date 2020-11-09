@@ -1,6 +1,9 @@
 <template>
-  <form-wizard @on-complete="onComplete" :title="title" shape="tab">
-    <tab-content title="Personal details" icon="ti-list">
+<b-container>
+  <b-row  class="d-flex justify-content-center">
+  <b-col sm="12" md="9" lg="9">
+  <form-wizard @on-complete="onComplete" :title="title" shape="tab" color ="#102B72">
+    <tab-content title="Booking Details" icon="ti-list">
       <div class="container">
         <b-row class="d-flex justify-content-center" style="margin-top:'30px'">
           <b-col sm="12" md="12" lg="6">
@@ -44,7 +47,7 @@
         <div class="d-flex justify-content-center">
           <b-row style="margin-top:20px">
             <b-col sm="12" md="12" lg="12">
-              <h6>Floor : Level 2</h6>
+            
             </b-col>
           </b-row>
         </div>
@@ -127,7 +130,7 @@
       </div>
     </tab-content>
 
-    <tab-content title="Additional Info" icon="ti-settings">
+    <tab-content title="Additional Info" icon="ti-info-alt">
       <div id="cobookers">
         <h3>Add Co-bookers</h3>
         <b-row class="d-flex justify-content-center">
@@ -177,7 +180,7 @@
             </template>
           </b-table>
         </div>
-        <b-button variant="outline-info" @click="save()">Download</b-button>
+       
         <hr style="border: solid 1px #cccccc" />
       </div>
 
@@ -220,7 +223,7 @@
       </div>
     </tab-content>
 
-    <tab-content title="Last step" icon="ti-check">
+    <tab-content title="Acknowledgement" icon="ti-check-box">
       <div>
         <b-row class="d-flex justify-content-center">
           <b-col sm="12" md="6" lg="6">
@@ -276,6 +279,9 @@
       </div>
     </tab-content>
   </form-wizard>
+  </b-col>
+  </b-row>
+</b-container>
 </template>
 
 <script>
