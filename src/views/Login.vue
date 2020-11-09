@@ -3,7 +3,7 @@
 
     <div style="background-color:#102B72; margin-top:-30px;" class="row align-items-center" >
 
-      <div class="container">
+      <div class="container" ref="loginContainer">
 
         <img ref="smuLogo" style="width:350px;z-index: 1;position:absolute;top: 0; left: 0; bottom: 0; right: 0;margin:auto" src="@/assets/smuIcon.png" alt="">
       
@@ -53,11 +53,23 @@ export default {
       let ui = new firebaseui.auth.AuthUI(app.auth());
       ui.start("#firebase-container", uiConfig);
     }
-
-    gsap.timeline()
-        .add()
-        .fromTo(this.$refs.smuLogo, {opacity: 0.2, scale: 0.7}, {opacity:1, scale:0.8, ease:"circle.out", duration:3})
-        .fromTo(this.$refs.loginCard, {opacity: 0}, {opacity:0.95, duration: 2.5})
+    this.$refs.loginContainer.setAttribute("style", "display: none;")
+    setTimeout(() => {
+      this.$refs.loginContainer.setAttribute("style", "")
+      if(this.$refs.loginCard.getElementsByClassName("firebaseui-idp-list")[0]){
+        gsap.timeline()
+          .add()
+          .fromTo(this.$refs.smuLogo, {opacity: 0.2, scale: 0.7}, {opacity:1, scale:0.8, ease:"circle.out", duration:3})
+          .fromTo(this.$refs.loginCard, {opacity: 0}, {opacity:0.95, duration: 2.5})
+      }else{
+        gsap.timeline()
+          .add()
+          .fromTo(this.$refs.smuLogo, {opacity: 0.2, scale: 0.7}, {opacity:1, scale:0.8, ease:"circle.out", duration:3})
+          .fromTo(this.$refs.loginCard, {opacity: 0}, {opacity:0, duration: 2.5})
+      }
+    }, 100)
+    
+    
     
   }
 };
