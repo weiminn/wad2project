@@ -5,7 +5,7 @@
 
       <div class="container" ref="loginContainer">
 
-        <img ref="smuLogo" style="width:350px;z-index: 1;position:absolute;top: 0; left: 0; bottom: 0; right: 0;margin:auto" src="@/assets/smuIcon.png" alt="">
+        <img ref="smuLogo" style="width:350px;z-index: 1;position:absolute;top: 0; left: 0; bottom: 0; right: 0;margin:auto;" src="@/assets/smuIcon.png" alt="">
       
         <div ref="loginCard" class="container col-10 col-sm-9 col-md-7 col-lg-5 pt-5 pb-5 shadow-lg loginContainer mx-auto d-block">
 
@@ -15,7 +15,10 @@
           </div>
 
         </div>
-
+      
+      </div>
+      <div ref="loader" class="loader-center" style="display: none;">
+        <b-spinner variant="secondary" type="grow" label="Loading..."></b-spinner>
       </div>
     </div>
   </div>
@@ -54,6 +57,7 @@ export default {
       ui.start("#firebase-container", uiConfig);
     }
     this.$refs.loginContainer.setAttribute("style", "display: none;")
+    
     setTimeout(() => {
       this.$refs.loginContainer.setAttribute("style", "")
       if(this.$refs.loginCard.getElementsByClassName("firebaseui-idp-list")[0]){
@@ -62,6 +66,7 @@ export default {
           .fromTo(this.$refs.smuLogo, {opacity: 0.2, scale: 0.7}, {opacity:1, scale:0.8, ease:"circle.out", duration:3})
           .fromTo(this.$refs.loginCard, {opacity: 0}, {opacity:0.95, duration: 2.5})
       }else{
+        this.$refs.loader.setAttribute("style", "")
         gsap.timeline()
           .add()
           .fromTo(this.$refs.smuLogo, {opacity: 0.2, scale: 0.7}, {opacity:1, scale:0.8, ease:"circle.out", duration:3})
@@ -88,5 +93,14 @@ export default {
 }
 .row {
   height: 100vh;
+}
+
+.loader-center{
+  position: absolute;
+  top: 50%; 
+  left: 50%; 
+  transform: translateX(-50%);
+  margin:auto;
+
 }
 </style>
