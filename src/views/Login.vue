@@ -56,10 +56,13 @@ export default {
           let user = authResult.user;
           let uid = user.uid;
           let email = user.email;
+          let name = user.displayName;
+
           users.child(uid).once("value").then((snapshot) => {
             let data = snapshot.val();
             
             if(data == null){
+              users.child(uid).update({email : email, fullName: name, credits: 5000});
               $this.$store.dispatch("logInUser", {userInfo: {...data, userID : uid, email : email}, loggedInStatus: true});
               $this.$router.push({name : "Profile" })
             }else{

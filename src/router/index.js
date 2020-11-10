@@ -7,6 +7,7 @@ import Schedule from "../views/Schedule.vue";
 import BookingForm from "../views/BookingForm.vue";
 import Login from "../views/Login.vue";
 import Logout from "../views/Logout.vue";
+import Profile from "../views/Profile.vue";
 
 Vue.use(VueRouter);
 
@@ -47,6 +48,12 @@ const routes = [
     path: "/logout",
     name: "Logout",
     component: Logout,
+    props: true
+  },
+  { 
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
     props: true
   },
  
