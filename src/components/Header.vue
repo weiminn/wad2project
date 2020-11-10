@@ -2,7 +2,7 @@
   <div>
     <b-navbar v-show="this.$store.state.isLoggedIn" toggleable="lg" type="dark" style="background-color:#102B72" >
       <img src="@/assets/smuIcon.png" class="mr-1" width="28px" alt=""> 
-      <b-navbar-brand href="/"> MeetingGoWhere </b-navbar-brand>
+      <b-navbar-brand href="/" v-if='navWidth >= 310'> MeetingGoWhere </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -15,11 +15,13 @@
 
         <b-navbar-nav v-if='navWidth > 991' class="ml-auto">
           <b-nav-item-dropdown text="Account" right>
+            <b-dropdown-item to="/profile">Update Profile</b-dropdown-item>
             <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
         <b-navbar-nav v-else>
+            <b-nav-item to="/profile">Update Profile</b-nav-item>
             <b-nav-item to="/logout">Sign Out</b-nav-item>
         </b-navbar-nav>
 
