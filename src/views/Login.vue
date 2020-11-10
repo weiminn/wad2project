@@ -33,6 +33,8 @@ import * as firebaseui from "firebaseui";
 
 import {gsap} from "gsap";
 
+const db = app.database();
+const users = db.ref("user");
 
 export default {
   data() {
@@ -41,12 +43,37 @@ export default {
   methods: {},
   mounted() {
     // this.Login();
+    let $this = this;
     let uiConfig = {
-      signInSuccessUrl: "/",
       signInOptions: [
         firebase.default.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.default.auth.EmailAuthProvider.PROVIDER_ID,
       ],
+      callbacks: {
+        signInSuccessWithAuthResult: function(authResult) {
+          // const userId = currentUser.uid; 
+          // Manually redirect.
+          let user = authResult.user;
+          let uid = user.uid;
+          let email = user.email;
+          users.child(uid).once("value").then((snapshot) => {
+            let data = snapshot.val();
+            
+            if(data == null){
+              $this.$store.dispatch("logInUser", {userInfo: {...data, userID : uid, email : email}, loggedInStatus: true});
+              $this.$router.push({name : "Profile" })
+            }else{
+              $this.$store.dispatch("logInUser", {userInfo: {...data, userID: uid}, loggedInStatus: true});
+              $this.$router.push({name : "Home"})
+              $this.user_info = data;
+            }
+            
+          });
+          // Do not automatically redirect.
+          return false;
+        },
+      }
+      
     };
 
     if (firebaseui.auth.AuthUI.getInstance()) {
@@ -76,6 +103,11 @@ export default {
     
     
     
+  },
+  beforeCreate(){
+    if(this.$store.state.isLoggedIn){
+      this.$router.push({name: "Home"})
+    }
   }
 };
 </script>
