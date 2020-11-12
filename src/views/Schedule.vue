@@ -1,18 +1,9 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col">
-                <b-button class="mt-2" block @click="back">Back</b-button>
-            </div>
-            <div class="col">
-                <h3>
-                    Room Schedules
-                </h3>
-            </div>
-            <div class="col">
-                <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Floorplans</b-button>
-            </div>
-        </div>
+        
+        <h3>
+            Room Schedules
+        </h3>
         
 
         <vue-cal
@@ -37,26 +28,23 @@
         </vue-cal>
         <!-- style bookings -->
 
-        <b-button @click="next" style="margin-top: 20px;" variant="primary">NEXT</b-button>
+        <div class="row d-flex justify-content-around" style="margin: 20px 20px 0 20px">
+            <!-- <div class="col"> -->
+                <b-button class="col-sm-3" style="margin-bottom:15px;" @click="back">Back</b-button>
+            <!-- </div> -->
+            <!-- <div class="col"> -->
+                <b-button class="col-sm-3" style="margin-bottom:15px;" @click="next" variant="primary">Next</b-button>
+            <!-- </div> -->
+        </div>
 
-        <b-modal ref="my-modal" hide-footer title="Mapp">
+        <b-modal ref="my-modal" hide-footer title="Invalid Timing">
             <div class="d-block text-center">
-                <h3>Selected Rooms</h3>
-                <b-carousel
-                    id="carousel-no-animation"
-                    style="text-shadow: 0px 0px 2px #000"
-                    no-animation
-                    indicators
-                    img-width="1024"
-                    img-height="480"
-                >
-                    <b-carousel-slide 
-                    v-for="l in links"
-                    :key="(l.level, l.building)"
-                    :caption="l.level"
-                    :img-src="l.url"
-                    ></b-carousel-slide>
-                </b-carousel>
+                <ul>
+                    <li>You may select one and only continuous slot.</li>
+                    <li>You can only select slots on the chosen day</li>
+                    <li>Selected slot cannot start before current time of the day.</li>
+                    <li>Selected slot cannot conflict with other booked slot(s).</li>
+                </ul>
             </div>
             <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Hide</b-button>
         </b-modal>
@@ -73,8 +61,8 @@ import app from "../firebase.service.js";
 
 const db = app.database();
 const bookingRef = db.ref("bookingsWM");
-const roomRef = db.ref("school");
-const storage = app.storage();
+// const roomRef = db.ref("school");
+// const storage = app.storage();
 
 export default {
     name: "Schedule",
@@ -83,23 +71,19 @@ export default {
         VueCal
     },
     mounted() {
+        if(this.$route.params.data) {
+            this.tFrom = (new Date(this.$route.params.data.fromDateTime)).getHours();
+            this.tTo = (new Date(this.$route.params.data.toDateTime)).getHours();
+            this.roomsToRetrieve = this.$route.params.data.selectedFacilities;
+        }
         this.fetchData();
     },
     data() {
         return {
-            tFrom: 8,
-            tTo: 16,
-            building: "SIS",
-            levels: ["level2", "level3"],
+            tFrom: 7,
+            tTo: 21,
             links: [],
-            roomsToRetrieve: [
-                "SIS GSR 2-1",
-                "SIS GSR 2-2",
-                "SIS GSR 2-3",
-                "SIS GSR 2-4",
-                "SIS GSR 2-5",
-                "SIS GSR 2-6",
-            ],
+            roomsToRetrieve: [],
             selectedArr: [],
             selectedEvent: null,
             books: [],
@@ -120,14 +104,14 @@ export default {
         //retrieve bookings for particular date and rooms
         bookingRef.once("value").then((snapshot) => {
             let data = snapshot.val();
-            console.log(data);
+            // console.log(data);
             var _books = Object.values(data).filter((b) => 
                 (new Date(Date.parse(b.bookingStart))).getDate().toString() == (new Date()).getDate().toString() &&
                 (new Date(Date.parse(b.bookingStart))).getMonth().toString() == (new Date()).getMonth().toString() &&
                 (new Date(Date.parse(b.bookingStart))).getFullYear().toString() == (new Date()).getFullYear().toString()
             );
-            console.log("filtered: " + _books.length);
-            console.log(_books);
+            // console.log("filtered: " + _books.length);
+            // console.log(_books);
 
             // populate bookings for the rooms
             _books.forEach(b => {
@@ -148,19 +132,19 @@ export default {
                 this.books.push(b);
             })
 
-            this.levels.forEach(level => {
-                roomRef.child(this.building).child(level).once('value', snap => {
-                    storage.ref(snap.val().path).getDownloadURL().then(u => {
-                        this.links.push({
-                            building: this.building,
-                            level: level,
-                            url: u
-                        });
-                    });
-                });
-            })
+            // this.levels.forEach(level => {
+            //     roomRef.child(this.building).child(level).once('value', snap => {
+            //         storage.ref(snap.val().path).getDownloadURL().then(u => {
+            //             this.links.push({
+            //                 building: this.building,
+            //                 level: level,
+            //                 url: u
+            //             });
+            //         });
+            //     });
+            // })
 
-            console.log(this.links);
+            // console.log(this.links);
         });
         },
         onEventChange: function(event) {
@@ -175,7 +159,22 @@ export default {
         },
         checkClash(cb){
             var clear = true;
-            for (let index = 0; index < this.books.length; index++) {
+            if (new Date(this.selectedArr[0].start) < new Date()){
+                cb(false);
+                return;
+            }
+
+            if (
+                (new Date(this.selectedArr[0].start)).getFullYear() < (new Date()).getFullYear() &&
+                (new Date(this.selectedArr[0].start)).getMonth() < (new Date()).getMonth() &&
+                (new Date(this.selectedArr[0].start)).getDate() < (new Date()).getDate()
+                ){
+                cb(false);
+                return;
+            }
+
+            for (var index = 0; index < this.books.length; index++) {
+                console.log("loopin'");
                 if(this.books[index].split == this.selectedArr[0].split){
                     if (
                         ((new Date(this.selectedArr[0].start)) <= (new Date(this.books[index].start)) && 
@@ -188,18 +187,24 @@ export default {
                             console.log("clear for " + index);
                     } else {
                         clear = false;
+                        break;
                     }      
                 }
                 if(index == this.books.length-1){
+                    console.log("Ended Loop");
                     cb(clear);
                 }
+            }
+
+            if(this.books.length == 0) {
+                cb(true);
             }
         },
         next: function() {
             if(this.selectedArr.length == 1){
                 this.checkClash((clear) => {
                     if(clear){
-                        console.log("Sending: " + (this.selectedArr[0].end));
+                        console.log("Sending: " + this.selectedArr[0]);
                         // pass on the data to ama's wizard
                         this.$router.push({
                             name: 'BookingForm',
@@ -212,17 +217,17 @@ export default {
                             }
                         });
                     } else {
-                        alert("Timing Clash!");
-                        console.log("Timing Clash!");
+                        console.log("Invalid Timing!");
+                        this.showModal()
                     }
                 })                
             } else {
-                alert("Please select one and only continuous slot.");
+                this.showModal()
                 console.log("Please select one and only continuous slot.");
             }
         },
         back() {
-
+            this.$router.go(-1);
         },
         showModal() {
             this.$refs['my-modal'].show()
