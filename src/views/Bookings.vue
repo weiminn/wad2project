@@ -1,13 +1,20 @@
 <template>
 
 <b-container> 
-<b-jumbotron><h1>Your Bookings</h1></b-jumbotron> 
-<b-row>
-  <b-col sm="12" md="6" lg="4" v-for="booking in this.bookings" :key="booking.id">
+<b-jumbotron><h1>Your Bookings </h1></b-jumbotron> 
+<b-row v-if="bookings.length >0 ">
+  <b-col sm="12" md="6" lg="4" v-for="booking in this.bookings" :key="booking.id" >
           <BookingCard
           :bookingDetails="booking"
         />
       </b-col>
+</b-row>
+
+<b-row v-if="bookings.length == 0">
+    <b-col sm="12" md="12">
+         <h3 class="mx-auto"> No bookings available! <a href="/">Create</a> a booking maybe?</h3>
+    </b-col>
+    
 </b-row>
 </b-container>
 </template>
@@ -51,9 +58,9 @@ export default {
           let data = snapshot.val();
           let keys = Object.keys(data);
 
-           let dataFormatted = Object.values(data).map((val,index) => {
+          let dataFormatted = Object.values(data).map((val, index) => {
             if (val != null){
-              if("coBookers" in val && val.coBookers.includes(  user.userID)){
+              if("coBookers" in val && user.userID in val.coBookers && !val.coBookers[user.userID]){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
               }
             }
@@ -61,33 +68,23 @@ export default {
 
           dataFormatted = dataFormatted.filter(val => {
             return val != null
-          }).filter(val => {
-            return new Date(val.bookingEnd).getTime() > new Date().getTime()
-          }).filter(val => {
+          })
+        //   .filter(val => {
+        //     return new Date(val.bookingEnd).getTime() > new Date().getTime()
+        //   })
+          .filter(val => {
             return val.status != "P" 
           }).filter(val => {
             return val.status != "p" 
           })
-
-       
-         
-
-          console.log(dataFormatted)
-
-
-
+        //   console.log(dataFormatted)
           return dataFormatted
       }).then(res => {return res})
-
+    console.log(data)
         this.bookings = data;
     }
   }
        
-    
-  
-              
-  
-      
   }
 </script>
 

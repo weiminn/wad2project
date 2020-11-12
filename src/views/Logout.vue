@@ -16,6 +16,7 @@ export default {
   beforeCreate () {
     app.auth().signOut();
     this.$store.dispatch("logOutUser", {userInfo: null, loggedInStatus: false});
+    this.$router.push({name : "Login"})
   },
 };
 </script>

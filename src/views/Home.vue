@@ -515,7 +515,7 @@ export default {
         this.toTime.HH = hours;
       }else{
         if(hours == 24){
-          console.log(hours)
+          // console.log(hours)
           this.toTime.HH = "00";
           this.toTime.mm = "00";
         }else{
@@ -784,24 +784,25 @@ export default {
             
             // Only proceed if its the same date
             if(bookingStartTime.toLocaleDateString() === fromDateTime.toLocaleDateString()){
-              console.log("Yo same date");
+              // console.log("Yo same date");
 
               //Checks to see if there is an overlap between requested time and booking time
               if( bookingEndTime.getTime() > fromDateTime.getTime()  &&
                     toDateTime.getTime() > bookingStartTime.getTime()){
 
-                console.log("Collision");
+                // console.log("Collision");
                 let school = booking.booking.split(" ")[0];
                 let facilityType = booking.booking.split(" ")[1];
 
   
                 currentAvailableFacilities[school][facilityType]--;  
-              }else{
-                  console.log("No Collision");
               }
-              console.log(this.currentAvailableFacilities);
-              console.log("YOOO THIS->" + this.defaultSchoolFacilities);
-              console.log(this.defaultSchoolFacilities);
+              // else{
+              //     console.log("No Collision");
+              // }
+              // console.log(this.currentAvailableFacilities);
+              // console.log("YOOO THIS->" + this.defaultSchoolFacilities);
+              // console.log(this.defaultSchoolFacilities);
 
             }
 

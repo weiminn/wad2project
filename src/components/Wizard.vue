@@ -1,9 +1,12 @@
 <template>
-  <form-wizard @on-complete="onComplete" :title="title" shape="tab">
-    <tab-content title="Personal details" icon="ti-list">
+<b-container>
+  <b-row  class="d-flex justify-content-center">
+  <b-col sm="12" md="9" lg="9">
+  <form-wizard @on-complete="onComplete" :title="title" shape="tab" color ="#102B72">
+    <tab-content title="Booking Details" icon="ti-list">
       <div class="container">
         <b-row class="d-flex justify-content-center" style="margin-top:'30px'">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md">
               <b-input-group-prepend is-text>
                 <b-icon icon="calendar3"></b-icon>
@@ -20,7 +23,7 @@
         </b-row>
 
         <b-row class="d-flex justify-content-center">
-          <b-col sm="6" md="6" lg="3">
+          <b-col sm="6" md="6" lg="4">
             <b-input-group prepend="From" size="md">
               <b-form-input
                 type="time"
@@ -30,7 +33,7 @@
               ></b-form-input>
             </b-input-group>
           </b-col>
-          <b-col sm="6" md="6" lg="3">
+          <b-col sm="6" md="6" lg="4">
             <b-input-group prepend="To" size="md">
               <b-form-input
                 type="time"
@@ -44,12 +47,12 @@
         <div class="d-flex justify-content-center">
           <b-row style="margin-top:20px">
             <b-col sm="12" md="12" lg="12">
-              <h6>Floor : Level 2</h6>
+            
             </b-col>
           </b-row>
         </div>
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Facility">
               <b-form-select
                 name="facility"
@@ -65,11 +68,11 @@
         </b-row>
 
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Purpose">
               <b-form-input
                 v-model="purpose"
-                id="link"
+                id="purpose"
                 :value="purpose"
                 placeholder="Enter purpose of booking"
                 required
@@ -79,7 +82,7 @@
         </b-row>
 
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Use Type">
               <b-form-select
                 name="usetype"
@@ -98,7 +101,7 @@
         </b-row>
 
         <b-row style="margin-top:'30px'" class="d-flex justify-content-center">
-          <b-col sm="12" md="12" lg="6">
+          <b-col sm="12" md="12" lg="8">
             <b-input-group size="md" prepend="Booking Usage">
               <b-form-select
                 v-model="bookingUsage"
@@ -127,11 +130,11 @@
       </div>
     </tab-content>
 
-    <tab-content title="Additional Info" icon="ti-settings">
+    <tab-content title="Additional Info" icon="ti-info-alt">
       <div id="cobookers">
-        <h3>Add Co-bookers</h3>
+        <h5>Add Co-bookers</h5>
         <b-row class="d-flex justify-content-center">
-          <b-col sm="12" md="6" lg="6">
+          <b-col sm="12" md="12" lg="9">
             <b-input-group size="md">
               <b-input-group-prepend is-text>
                 <b-icon icon="search"></b-icon>
@@ -152,7 +155,7 @@
         </b-row>
         <div class="d-flex justify-content-center">
           <b-table
-            class="col-md-6 col-lg-6 col-sm-12"
+            class="col-md-12 col-lg-9 col-sm-12"
             ref="selectedTable"
             ef="selectableTable"
             selectable
@@ -177,14 +180,14 @@
             </template>
           </b-table>
         </div>
-        <b-button variant="outline-info" @click="save()">Download</b-button>
+       
         <hr style="border: solid 1px #cccccc" />
       </div>
 
       <div id="resources">
-        <h3>Resource</h3>
+        <h5>Resource</h5>
         <b-row class="d-flex justify-content-center">
-          <b-col sm="12" md="6" lg="6">
+          <b-col sm="12" md="12" lg="9">
             <b-input-group size="md">
               <b-input-group-prepend is-text>
                 <b-icon icon="link-45deg"></b-icon>
@@ -201,7 +204,7 @@
 
         <div class="d-flex justify-content-center">
           <b-table
-            class="col-md-6 col-lg-6 col-sm-12"
+            class="col-md-12 col-lg-9 col-sm-12"
             ref="selectableURLTable"
             :items="urlItems"
             :fields="urlFields"
@@ -220,10 +223,10 @@
       </div>
     </tab-content>
 
-    <tab-content title="Last step" icon="ti-check">
+    <tab-content title="Acknowledgement" icon="ti-check-box">
       <div>
         <b-row class="d-flex justify-content-center">
-          <b-col sm="12" md="6" lg="6">
+          <b-col sm="12" md="12" lg="10">
             <b-jumbotron
               style="text-align:center"
               lead="Acknowledgement and declaration"
@@ -276,6 +279,9 @@
       </div>
     </tab-content>
   </form-wizard>
+  </b-col>
+  </b-row>
+</b-container>
 </template>
 
 <script>
@@ -291,8 +297,6 @@ export default {
     title: String,
     bookingDate: String,
     facilityOptions: [],
-    purpose: String,
-    link: String,
     from: String,
     to: String,
     facility: String
@@ -306,6 +310,8 @@ export default {
       items: [],
       urlFields: ["URL", { key: "actions", label: "Actions" }],
       urlItems: [],
+      purpose: "",
+      link: "",
       URLselected: [],
       cobookers: [],
       cal: "",
@@ -314,7 +320,7 @@ export default {
     };
   },
   methods: {
-    onComplete: function() {
+    onComplete: async function() {
       var num ;
       bookingRef.on("value", function(snapshot) {
         num =snapshot.numChildren();
@@ -324,6 +330,7 @@ export default {
       var cobookersInfo = this.cobookers;
       var cobookersEmail = [];
       var users;
+      var booker = this.$store.state.userInfo.userID;
       for (var prop in cobookersInfo) {
         userRef.on("value", function(snapshot) {
           users = snapshot.val();
@@ -338,7 +345,7 @@ export default {
           if (users[user]["email"] == cobookersEmail[email]) {
             var data = {}
             data[user] = false;
-            cobookersID.push(data);
+            cobookersID = {...data, ...cobookersID};
           }
         }
       }
@@ -355,6 +362,21 @@ export default {
       let end = moment(this.bookingDate + " " + this.to).format(
         "MM-DD-YYYY, hh:mm:ss A"
       );
+      console.log(start)
+      console.log(end)
+      console.log(this.to)
+
+      var formattedhourto = moment(this.to, "HH:mm:ss").format("HH");
+      var formattedhourfrom = moment(this.from, "HH:mm:ss").format("HH");
+      var formattedminto = moment(this.to, "HH:mm:ss").format("mm");
+      var formattedminfrom = moment(this.from, "HH:mm:ss").format("mm");
+      
+      var timedifference = ((formattedhourto-formattedhourfrom)*60) + (formattedminfrom - formattedminto)
+      var totalCredits = (timedifference/30) * 15
+      // totalCredits = 105
+      
+
+      
 
       if (
         this.purpose == "" ||
@@ -368,27 +390,56 @@ export default {
     
         if (this.checkSelected == true) {
           console.log(num)
-          bookingRef.push({
-            booking: this.facility,
-            bookingStart: start,
-            bookingEnd: end,
-            booker: "Au1s5jaikCPns7AA1L7lMwJIVsg2",
-            purpose: this.purpose,
-            useType: this.usetype,
-            bookingUsage: this.bookingUsage,
-            resourceLinks: this.urlItems,
-            coBookers: cobookersID,
-            status: "p"
-          });
-          this.$router.push({
-            name: "Booking"
-          });
+          let isValid = await this.isSufficientCredit(totalCredits, cobookersID, booker)
+          if (isValid){
+            bookingRef.push({
+              booking: this.facility,
+              bookingStart: start,
+              bookingEnd: end,
+              booker: booker,
+              purpose: this.purpose,
+              useType: this.usetype,
+              bookingUsage: this.bookingUsage,
+              resourceLinks: this.urlItems,
+              coBookers: cobookersID,
+              status: "p",
+              credits:totalCredits
+            });
+            this.$router.push({
+              name: "Booking"
+            });
+          }else{
+            alert("Booker/Co-Booker(s) does not have enough credits")
+          }
+          
         } else {
           alert("Please agree to the Acknowledgement and Declaration");
         }
       }
     },
 
+    isSufficientCredit: async function(totalCredits, cobookersID, booker){
+
+      let credits = Math.ceil(totalCredits / (Object.keys(cobookersID).length + 1 ))
+
+      let userIDs = Object.keys(cobookersID);
+      userIDs.push(booker);
+
+      let userInfos = await Promise.all(userIDs.map(async (val) => {
+        let userInfo = await userRef.child(val).once("value").then(function(snapshot) {
+            let data = snapshot.val();
+            return data
+        }).then(res => {return res})  
+        
+        return userInfo
+      }))
+
+      let isValid = userInfos.every((val) => {
+        return val.credits >= credits
+      })
+
+      return isValid;
+    },
     
     addUrl: function() {
       var my_url = {
@@ -446,15 +497,20 @@ export default {
     var tablerows;
     userRef.on("value", function(snapshot) {
       tablerows = snapshot.val();
-      console.log(tablerows);
+      // console.log(tablerows);
     });
 
     for (var props in tablerows) {
-      this.items.push({
-        first_name: tablerows[props]["fullName"],
-        email: tablerows[props]["email"]
-      });
+      if (this.$store.state.userInfo.userID != props){
+        this.items.push({
+          first_name: tablerows[props]["fullName"],
+          email: tablerows[props]["email"]
+        });
+      }
+
     }
+
+    
 
     
 
@@ -470,10 +526,12 @@ export default {
         });
 
         for (var props in tablerows) {
-          this.items.push({
-            first_name: tablerows[props]["fullName"],
-            email: tablerows[props]["email"]
-          });
+          if (this.$store.state.userInfo.userID != props){
+            this.items.push({
+              first_name: tablerows[props]["fullName"],
+              email: tablerows[props]["email"]
+            });
+          }
         }
       }
     }
@@ -501,4 +559,13 @@ h3 {
 ul {
   text-align: justify;
 }
+
+.vue-form-wizard .navbar .navbar-nav>li>a.wizard-btn, .vue-form-wizard .wizard-btn {
+  min-width: 100px;
+}
+
+.vue-form-wizard .wizard-icon-circle.tab_shape{
+  min-width: 80px;
+}
+
 </style>
