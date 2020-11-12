@@ -72,8 +72,8 @@ export default {
     },
     mounted() {
         if(this.$route.params.data) {
-            this.tFrom = (new Date(this.$route.params.data.fromDateTime)).getHours();
-            this.tTo = (new Date(this.$route.params.data.toDateTime)).getHours();
+            // this.tFrom = (new Date(this.$route.params.data.fromDateTime)).getHours();
+            // this.tTo = (new Date(this.$route.params.data.toDateTime)).getHours();
             this.roomsToRetrieve = this.$route.params.data.selectedFacilities;
         }
         this.fetchData();
@@ -81,7 +81,7 @@ export default {
     data() {
         return {
             tFrom: 7,
-            tTo: 21,
+            tTo: 22,
             links: [],
             roomsToRetrieve: [],
             selectedArr: [],
@@ -227,7 +227,9 @@ export default {
             }
         },
         back() {
-            this.$router.go(-1);
+            this.$router.push({
+                name: "Home"
+            });
         },
         showModal() {
             this.$refs['my-modal'].show()
