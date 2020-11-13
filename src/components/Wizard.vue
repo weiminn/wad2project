@@ -5,10 +5,11 @@
         <form-wizard
           @on-complete="onComplete"
           :title="title"
+          :subtitle ="subtitle"
           shape="tab"
           color="#102B72"
         >
-          <tab-content title="Booking Details" icon="ti-list">
+          <tab-content title="Details" icon="ti-list">
             <div class="container">
               <b-row
                 class="d-flex justify-content-center"
@@ -149,7 +150,7 @@
             </div>
           </tab-content>
 
-          <tab-content title="Additional Info" icon="ti-info-alt">
+          <tab-content title="Extras" icon="ti-info-alt">
             <div id="cobookers">
               <h5>Add Co-bookers</h5>
               <b-row class="d-flex justify-content-center">
@@ -254,7 +255,7 @@
             </div>
           </tab-content>
 
-          <tab-content title="Acknowledgement" icon="ti-check-box">
+          <tab-content title="Legal" icon="ti-check-box">
             <div>
               <b-row class="d-flex justify-content-center">
                 <b-col sm="12" md="12" lg="10">
@@ -328,6 +329,7 @@ export default {
   name: "Wizard",
   props: {
     title: String,
+    subtitle: String,
     bookingDate: String,
     facilityOptions: [],
     from: String,
