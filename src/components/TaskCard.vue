@@ -94,7 +94,6 @@ export default {
           }, {});
 
           bookingsRef.child(details.id).update(data);
-          this.$router.go()
           
           
           break;

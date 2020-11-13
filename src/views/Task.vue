@@ -22,6 +22,7 @@ import TaskCard from "@/components/TaskCard";
 import app from "../firebase.service.js";
 
 const db = app.database();
+const userRef = db.ref("user");
 const bookingsRef = db.ref("booking");
 
 export default {
@@ -42,16 +43,32 @@ export default {
     this.fetchData();
   },
   methods: {
-    acceptAll: function() {
+    acceptAll: async function() {
       alert('Accepting all "Pending Confirmation" tasks');
       var userInfo = this.userInfo
       var userID = userInfo.userID;
-      this.tasks.map((val) => {
+      await this.tasks.map( async (val) => {
         if (val.status.toUpperCase() == "P"){
-          
+
           this.$set(val.coBookers, userID, true);
 
           var status = Object.values(val.coBookers).every(v => v === true) ? 'A' : 'P'
+
+          let coBookers = val.coBookers;
+          let credits = Math.ceil(val.credits / (Object.keys(coBookers).length + 1 ))
+
+          let userIDs = Object.keys(coBookers);
+          userIDs.push(val.booker)
+
+          userIDs.map(async (val) => {
+            let userInfo = await userRef.child(val).once("value").then(function(snapshot) {
+                let data = snapshot.val();
+                return data
+            }).then(res => {return res})
+
+            userRef.child(val).update({...userInfo, credits : userInfo.credits - credits});
+          })
+          
           this.$set(val, "status", status);
 
           var data = Object.keys(val).reduce((object, key) => {
@@ -63,7 +80,7 @@ export default {
           bookingsRef.child(val.id).update(data);
         }
       })
-      this.$router.go();
+    
     },
     fetchData: async function (){
       let userInfo = this.userInfo;
@@ -74,7 +91,7 @@ export default {
 
           let dataFormatted = Object.values(data).map((val, index) => {
             if (val != null){
-              if("coBookers" in val && userID in val.coBookers && !val.coBookers[userID]){
+              if("coBookers" in val && userID in val.coBookers && (!val.coBookers[userID])){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
               }
             }

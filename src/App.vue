@@ -27,6 +27,12 @@ export default {
         }
       }
     }
+  },
+  mounted(){
+    if(! this.$store.state.isLoggedIn && this.$route.name != "Login"){
+      
+      this.$router.push({ name: "Login" });
+    }
   }
 };
 </script>
