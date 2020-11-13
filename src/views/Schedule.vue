@@ -276,9 +276,16 @@ export default {
         },
         scrollToCurrentTime() {
             // console.log("Scrolling");
-            const calendar = document.querySelector('#vuecal .vuecal__bg');
-            const hours = (new Date()).getHours() + (new Date()).getMinutes() / 60;
-            calendar.scrollTo({ top: hours * this.timeCellHeight, behavior: 'smooth' });
+            if(
+                new Date(this.$route.params.data.toDateTime).getDate().toString() == (new Date()).getDate().toString() &&
+                new Date(this.$route.params.data.toDateTime).getMonth().toString() == (new Date()).getMonth().toString() &&
+                new Date(this.$route.params.data.toDateTime).getFullYear().toString() == (new Date()).getFullYear().toString()
+                ){
+                const calendar = document.querySelector('#vuecal .vuecal__bg');
+                const hours = (new Date()).getHours() + (new Date()).getMinutes() / 60;
+                calendar.scrollTo({ top: hours * this.timeCellHeight, behavior: 'smooth' });
+            }
+            
         },
     }
 };
