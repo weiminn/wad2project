@@ -6,11 +6,12 @@
         </h3>
         
         <vue-cal
-            ref="vuecal"
+            id="vuecal"
             @view-change="viewChanged"
             :selected-date="selectedDate"
             class="scrollable vuecal--full-height-delete"
             hide-view-selector
+            :time-cell-height="timeCellHeight"
             :time-from="tFrom * 60"
             :time-to="tTo * 60"
             :time-step="30"
@@ -25,6 +26,7 @@
             @event-drag-create="onEventCreate"
             @event-duration-change="onEventChange"
             @event-delete="onEventDelete"
+            @ready="scrollToCurrentTime"
             >
         </vue-cal>
         <!-- style bookings -->
@@ -92,7 +94,8 @@ export default {
             books: [],
             daySplits: [],
             valid: false,
-            params:{ title: false, drag: false, resize: true, delete: true, create: true }
+            params:{ title: false, drag: false, resize: true, delete: true, create: true },
+            timeCellHeight: 40
         };
     },
     methods: {
@@ -112,7 +115,6 @@ export default {
             this.retrievedDates.push(date);
             bookingRef.once("value").then((snapshot) => {
                 let data = snapshot.val();
-                console.log(data);
                 var _books = Object.values(data).filter((b) => 
                     (new Date(Date.parse(b.bookingStart))).getDate().toString() == date.getDate().toString() &&
                     (new Date(Date.parse(b.bookingStart))).getMonth().toString() == date.getMonth().toString() &&
@@ -160,7 +162,6 @@ export default {
                     if(checkArr.length == 0) {
                         this.retrieveDay(event.startDate);
                     }
-                    console.log(this.retrievedDates.length);
                 }
             }
         },
@@ -272,7 +273,13 @@ export default {
             // We pass the ID of the button that we want to return focus to
             // when the modal has hidden
             this.$refs['my-modal'].toggle('#toggle-btn')
-        }
+        },
+        scrollToCurrentTime() {
+            // console.log("Scrolling");
+            const calendar = document.querySelector('#vuecal .vuecal__bg');
+            const hours = (new Date()).getHours() + (new Date()).getMinutes() / 60;
+            calendar.scrollTo({ top: hours * this.timeCellHeight, behavior: 'smooth' });
+        },
     }
 };
 </script>
