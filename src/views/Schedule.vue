@@ -42,7 +42,6 @@
             <div class="d-block text-center">
                 <ul>
                     <li>You may select one and only continuous slot.</li>
-                    <li>You can only select slots on the chosen day</li>
                     <li>Selected slot cannot start before current time of the day.</li>
                     <li>Selected slot cannot conflict with other booked slot(s).</li>
                     <li>Selected slot cannot be more than 4 hours.</li>
@@ -131,7 +130,12 @@ export default {
 
                     b.start = b.bookingStart;
                     b.end = b.bookingEnd;
-                    b.class = "unavail";
+
+                    if(b.status.toUpperCase() == "P"){
+                        b.class = "pending";
+                    } else {
+                        b.class = "unavailable";
+                    }
                     
                     b.deletable = false;
                     b.resizable = false;
@@ -173,6 +177,7 @@ export default {
         onEventDelete: function(event) {
             this.selectedArr = this.selectedArr.filter(e => e._eid !== event._eid);
             this.params.create = true;
+            this.valid = false;
         },
         checkClash(cb){
             var clear = true;
@@ -273,10 +278,15 @@ export default {
 </script>
 
 <style>
-.vuecal__event.unavail {
+.vuecal__event.unavailable {
   background-color: rgba(255, 102, 102, 0.9);
   border: 1px solid rgb(235, 82, 82);
   color: #fff;
+}
+.vuecal__event.pending {
+  background-color: rgba(202, 228, 234, 0.9);
+  border: 1px solid rgb(202, 228, 234);
+  color: #000;
 }
 
 .vuecal__cell-split .split-label {
