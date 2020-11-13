@@ -81,23 +81,6 @@
                 class="d-flex justify-content-center"
               >
                 <b-col sm="12" md="12" lg="8">
-                  <b-input-group size="md" prepend="Purpose">
-                    <b-form-input
-                      v-model="purpose"
-                      id="purpose"
-                      :value="purpose"
-                      placeholder="Enter purpose of booking"
-                      required
-                    ></b-form-input>
-                  </b-input-group>
-                </b-col>
-              </b-row>
-
-              <b-row
-                style="margin-top: '30px'"
-                class="d-flex justify-content-center"
-              >
-                <b-col sm="12" md="12" lg="8">
                   <b-input-group size="md" prepend="Use Type">
                     <b-form-select
                       name="usetype"
@@ -145,6 +128,24 @@
                   </b-input-group>
                 </b-col>
               </b-row>
+
+                      <b-row
+                style="margin-top: '30px'"
+                class="d-flex justify-content-center"
+              >
+                <b-col sm="12" md="12" lg="8">
+                  <b-input-group size="md" prepend="Purpose">
+                    <b-form-textarea
+                      v-model="purpose"
+                      id="purpose"
+                      :value="purpose"
+                      placeholder="Enter purpose of booking"
+                      required
+                    ></b-form-textarea>
+                  </b-input-group>
+                </b-col>
+              </b-row>
+
             </div>
           </tab-content>
 
@@ -169,6 +170,8 @@
                       >
                     </b-input-group-append>
                   </b-input-group>
+                  <div v-for="item in items" :key="item">{{item.first_name +" "+ item.email}}</div>
+
                   <b-check
                       v-model="checkSend"
                       id="checkSend"
