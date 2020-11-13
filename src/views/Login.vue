@@ -57,7 +57,7 @@ export default {
           let uid = user.uid;
           let email = user.email;
           let name = user.displayName;
-
+          console.log(user);
           users.child(uid).once("value").then((snapshot) => {
             let data = snapshot.val();
             
@@ -73,6 +73,7 @@ export default {
             
           });
           // Do not automatically redirect.
+
           return false;
         },
       }
