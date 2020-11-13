@@ -6,6 +6,9 @@
         </h3>
         
         <vue-cal
+            ref="vuecal"
+            @view-change="viewChanged"
+            :selected-date="selectedDate"
             class="scrollable vuecal--full-height-delete"
             hide-view-selector
             :time-from="tFrom * 60"
@@ -31,7 +34,7 @@
                 <b-button class="col-sm-3" style="margin-bottom:15px;width:100px;" @click="back">Back</b-button>
             <!-- </div> -->
             <!-- <div class="col"> -->
-                <b-button class="col-sm-3" style="margin-bottom:15px;width:100px;" @click="next" variant="primary">Next</b-button>
+                <b-button class="col-sm-3" :disabled="!valid" style="margin-bottom:15px;width:100px;" @click="next" variant="primary">Next</b-button>
             <!-- </div> -->
         </div>
 
@@ -42,9 +45,9 @@
                     <li>You can only select slots on the chosen day</li>
                     <li>Selected slot cannot start before current time of the day.</li>
                     <li>Selected slot cannot conflict with other booked slot(s).</li>
+                    <li>Selected slot cannot be more than 4 hours.</li>
                 </ul>
             </div>
-            <!-- <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Hide</b-button> -->
         </b-modal>
     </div>
 </template>
@@ -58,7 +61,7 @@ import "vue-cal/dist/vuecal.css";
 import app from "../firebase.service.js";
 
 const db = app.database();
-const bookingRef = db.ref("bookingsWM");
+const bookingRef = db.ref("booking");
 // const roomRef = db.ref("school");
 // const storage = app.storage();
 
@@ -72,25 +75,29 @@ export default {
         if(this.$route.params.data) {
             // this.tFrom = (new Date(this.$route.params.data.fromDateTime)).getHours();
             // this.tTo = (new Date(this.$route.params.data.toDateTime)).getHours();
+            this.selectedDate = new Date(this.$route.params.data.toDateTime);
             this.roomsToRetrieve = this.$route.params.data.selectedFacilities;
         }
-        this.fetchData();
+        this.displayRooms();
     },
     data() {
         return {
+            selectedDate: new Date(),
             tFrom: 8,
             tTo: 22.5,
             links: [],
             roomsToRetrieve: [],
+            retrievedDates: [],
             selectedArr: [],
             selectedEvent: null,
             books: [],
             daySplits: [],
+            valid: false,
             params:{ title: false, drag: false, resize: true, delete: true, create: true }
         };
     },
     methods: {
-        async fetchData() {
+        displayRooms() {
         //display rooms
             for (let index = 1; index <= this.roomsToRetrieve.length; index++) {
                 this.daySplits.push({
@@ -98,61 +105,70 @@ export default {
                     label: this.roomsToRetrieve[index-1],
                     class: "room"
                 });
-            }
+            }   
+            this.retrieveDay(new Date());         
+        },
+        retrieveDay(date){
+            //retrieve bookings for particular date and rooms
+            this.retrievedDates.push(date);
+            bookingRef.once("value").then((snapshot) => {
+                let data = snapshot.val();
+                console.log(data);
+                var _books = Object.values(data).filter((b) => 
+                    (new Date(Date.parse(b.bookingStart))).getDate().toString() == date.getDate().toString() &&
+                    (new Date(Date.parse(b.bookingStart))).getMonth().toString() == date.getMonth().toString() &&
+                    (new Date(Date.parse(b.bookingStart))).getFullYear().toString() == date.getFullYear().toString()
+                );
+                
+                // populate bookings for the rooms
+                _books.forEach(b => {
+                    for (const s of this.daySplits) {
+                        // console.log('checking: ' + s.id + " " + s.label + " with " + b.booking);
+                        if(s.label == b.booking) {
+                            b.split = s.id;
+                        };
+                    }
 
-        //retrieve bookings for particular date and rooms
-        bookingRef.once("value").then((snapshot) => {
-            let data = snapshot.val();
-            // console.log(data);
-            var _books = Object.values(data).filter((b) => 
-                (new Date(Date.parse(b.bookingStart))).getDate().toString() == (new Date()).getDate().toString() &&
-                (new Date(Date.parse(b.bookingStart))).getMonth().toString() == (new Date()).getMonth().toString() &&
-                (new Date(Date.parse(b.bookingStart))).getFullYear().toString() == (new Date()).getFullYear().toString()
-            );
-            // console.log("filtered: " + _books.length);
-            // console.log(_books);
+                    b.start = b.bookingStart;
+                    b.end = b.bookingEnd;
+                    b.class = "unavail";
+                    
+                    b.deletable = false;
+                    b.resizable = false;
+                    
+                    this.books.push(b);
+                })
+            });
+        },
+        viewChanged(event) {
 
-            // populate bookings for the rooms
-            _books.forEach(b => {
-                for (const s of this.daySplits) {
-                    // console.log('checking: ' + s.id + " " + s.label + " with " + b.booking);
-                    if(s.label == b.booking) {
-                        b.split = s.id;
-                    };
+            var checkArr = [];
+            for (let index = 0; index < this.retrievedDates.length; index++) {
+                if(
+                    this.retrievedDates[index].getDate().toString() == event.startDate.getDate().toString() &&
+                    this.retrievedDates[index].getMonth().toString() == event.startDate.getMonth().toString() &&
+                    this.retrievedDates[index].getFullYear().toString() == event.startDate.getFullYear().toString()
+                    ){
+                    checkArr.push(this.retrievedDates[index]);
                 }
 
-                b.start = b.bookingStart;
-                b.end = b.bookingEnd;
-                b.class = "unavail";
-                
-                b.deletable = false;
-                b.resizable = false;
-                
-                this.books.push(b);
-            })
-
-            // this.levels.forEach(level => {
-            //     roomRef.child(this.building).child(level).once('value', snap => {
-            //         storage.ref(snap.val().path).getDownloadURL().then(u => {
-            //             this.links.push({
-            //                 building: this.building,
-            //                 level: level,
-            //                 url: u
-            //             });
-            //         });
-            //     });
-            // })
-
-            // console.log(this.links);
-        });
+                if(index == this.retrievedDates.length-1){
+                    if(checkArr.length == 0) {
+                        this.retrieveDay(event.startDate);
+                    }
+                    console.log(this.retrievedDates.length);
+                }
+            }
         },
         onEventChange: function(event) {
             console.log(event);
             console.log(this.selectedArr.length);
+            this.checkValid();
         },
         onEventCreate: function(event) {
             this.selectedArr.push(event);
             this.params.create = false;
+            this.checkValid();
         },
         onEventDelete: function(event) {
             this.selectedArr = this.selectedArr.filter(e => e._eid !== event._eid);
@@ -201,31 +217,40 @@ export default {
                 cb(true);
             }
         },
-        next: function() {
+        checkValid: function() {
             if(this.selectedArr.length == 1){
                 this.checkClash((clear) => {
                     if(clear){
-                        console.log("Sending: " + this.selectedArr[0]);
-                        // pass on the data to ama's wizard
-                        this.$router.push({
-                            name: 'BookingForm',
-                            params: {
-                                selectedTiming: {
-                                    bookingStart: this.selectedArr[0].start.toLocaleString(),
-                                    bookingEnd: this.selectedArr[0].end.toLocaleString(),
-                                    booking: this.daySplits.filter(s => s.id == this.selectedArr[0].split)[0].label
-                                }
-                            }
-                        });
+                        if((this.selectedArr[0].end - this.selectedArr[0].start)/(3600000) <= 4){
+                            this.valid = true;
+                        } else {
+                            console.log("Invalid Timing!");
+                            this.valid = false;
+                            this.showModal()
+                        }
                     } else {
                         console.log("Invalid Timing!");
+                        this.valid = false;
                         this.showModal()
                     }
                 })                
             } else {
                 this.showModal()
+                this.valid = false;
                 console.log("Please select one and only continuous slot.");
             }
+        },
+        next: function() {
+            this.$router.push({
+                name: 'BookingForm',
+                params: {
+                    selectedTiming: {
+                        bookingStart: this.selectedArr[0].start.toLocaleString(),
+                        bookingEnd: this.selectedArr[0].end.toLocaleString(),
+                        booking: this.daySplits.filter(s => s.id == this.selectedArr[0].split)[0].label
+                    }
+                }
+            });
         },
         back() {
             this.$router.push({
