@@ -2,38 +2,36 @@
     <div>
         
         <h3>
-            Room Schedules
+            Facility Booking
         </h3>
         
-
         <vue-cal
-            class="scrollable"
+            class="scrollable vuecal--full-height-delete"
             hide-view-selector
             :time-from="tFrom * 60"
             :time-to="tTo * 60"
             :time-step="30"
             :disable-views="['years', 'month', 'year', 'week']"
             active-view="day"
-            editable-events
+            :editable-events="params"
             :events="books"
             :split-days="daySplits"
             :sticky-split-labels="true"
-            :min-split-width="100"
+            :min-split-width="130"
             :snap-to-time="30"
             @event-drag-create="onEventCreate"
             @event-duration-change="onEventChange"
             @event-delete="onEventDelete"
-        >
-        
+            >
         </vue-cal>
         <!-- style bookings -->
 
-        <div class="row d-flex justify-content-around" style="margin: 20px 20px 0 20px">
+        <div class="row d-flex justify-content-between" style="margin: 20px 20px 0 20px">
             <!-- <div class="col"> -->
-                <b-button class="col-sm-3" style="margin-bottom:15px;" @click="back">Back</b-button>
+                <b-button class="col-sm-3" style="margin-bottom:15px;width:100px;" @click="back">Back</b-button>
             <!-- </div> -->
             <!-- <div class="col"> -->
-                <b-button class="col-sm-3" style="margin-bottom:15px;" @click="next" variant="primary">Next</b-button>
+                <b-button class="col-sm-3" style="margin-bottom:15px;width:100px;" @click="next" variant="primary">Next</b-button>
             <!-- </div> -->
         </div>
 
@@ -46,7 +44,7 @@
                     <li>Selected slot cannot conflict with other booked slot(s).</li>
                 </ul>
             </div>
-            <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Hide</b-button>
+            <!-- <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Hide</b-button> -->
         </b-modal>
     </div>
 </template>
@@ -80,14 +78,15 @@ export default {
     },
     data() {
         return {
-            tFrom: 7,
-            tTo: 22,
+            tFrom: 8,
+            tTo: 22.5,
             links: [],
             roomsToRetrieve: [],
             selectedArr: [],
             selectedEvent: null,
             books: [],
             daySplits: [],
+            params:{ title: false, drag: false, resize: true, delete: true, create: true }
         };
     },
     methods: {
@@ -153,9 +152,11 @@ export default {
         },
         onEventCreate: function(event) {
             this.selectedArr.push(event);
+            this.params.create = false;
         },
         onEventDelete: function(event) {
             this.selectedArr = this.selectedArr.filter(e => e._eid !== event._eid);
+            this.params.create = true;
         },
         checkClash(cb){
             var clear = true;
@@ -261,4 +262,30 @@ export default {
 .scrollable {
     height: 70vh;
 }
+
+
+
+
+.vuecal__event {
+    background-color:#102B72;
+    color:#fff;
+    border:1px solid slategray;
+}
+
+.vuecal--overflow-x.vuecal--day-view.vuecal--sticky-split-labels .vuecal__time-column {
+    margin-top: 4.7em;
+}
+
+.vuecal__split-days-headers .day-split-header {
+    height: 75px;
+}
+
+.vuecal__cell-split {
+    border-right:0.1px solid #e0e0e0;
+}
+
+.vuecal__no-event {
+    display: none;
+}
+
 </style>
