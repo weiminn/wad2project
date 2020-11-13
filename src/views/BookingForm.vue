@@ -33,10 +33,10 @@ export default {
      
 
       
-      this.$data.from = moment(this.selectedTiming.bookingStart).format("HH:mm:ss").toString();
-      this.$data.to = moment(this.selectedTiming.bookingEnd).format("HH:mm:ss").toString();
+      this.$data.from = moment(this.selectedTiming.bookingStart,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
+      this.$data.to = moment(this.selectedTiming.bookingEnd,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
 
-      console.log(this.$data.bookingDate)
+      console.log(this.$data.from)
       this.$data.facilityOptions.push(this.selectedTiming.booking);
       this.$data.facility = this.selectedTiming.booking;
   },
