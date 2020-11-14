@@ -103,7 +103,7 @@ export default {
 
           let dataFormatted = Object.values(data).map((val, index) => {
             if (val != null){
-              if("coBookers" in val && user.userID in val.coBookers && !val.coBookers[user.userID]){
+              if(val.booker == user.userID || ("coBookers" in val && user.userID in val.coBookers && !val.coBookers[user.userID])){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
               }
             }
@@ -111,6 +111,10 @@ export default {
 
           dataFormatted = dataFormatted.filter(val => {
             return val != null
+          })
+          
+          dataFormatted = dataFormatted.filter(val => {
+            return new Date(val.bookingStart) > new Date();
           })
      
         //   console.log(dataFormatted)
