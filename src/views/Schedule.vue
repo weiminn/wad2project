@@ -5,6 +5,16 @@
             Facility Booking
         </h3>
         
+        <div class="row">
+            <div class="col-md-5">
+                <div class="row legend">
+                    <div class="col-md-4 legend-item "><b>Legend:</b></div>
+                    <div class="col-md-4 legend-item unavailable">Unavailable</div>
+                    <div class="col-md-4 legend-item pending">Pending</div>
+                </div>
+            </div>
+        </div>
+        
         <vue-cal
             id="vuecal"
             @view-change="viewChanged"
@@ -292,12 +302,23 @@ export default {
 </script>
 
 <style>
-.vuecal__event.unavailable {
+
+.legend {
+    margin: 5px;
+    border: 1px solid rgb(0, 0, 0);
+    padding: 5px;
+}
+
+.legend-item {
+    font-size: .8em;
+}
+
+.vuecal__event.unavailable, .unavailable {
   background-color: rgba(255, 102, 102, 0.9);
   border: 1px solid rgb(235, 82, 82);
   color: #fff;
 }
-.vuecal__event.pending {
+.vuecal__event.pending, .pending {
   background-color: rgba(202, 228, 234, 0.9);
   border: 1px solid rgb(202, 228, 234);
   color: #000;
@@ -309,11 +330,8 @@ export default {
 }
 
 .scrollable {
-    height: 70vh;
+    height: 60vh;
 }
-
-
-
 
 .vuecal__event {
     background-color:#102B72;
