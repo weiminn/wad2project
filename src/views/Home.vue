@@ -26,6 +26,7 @@
                 v-model="fromTime" 
                 :minute-interval="30" 
                 :hour-range="[[8, 21]]"
+                hide-disabled-hours
                 hide-clear-button ></vue-timepicker>
 
         <vue-timepicker 
@@ -37,6 +38,7 @@
                 v-model="toTime" 
                 :minute-interval="30" 
                 :hour-range="[[8, 22]]"
+                hide-disabled-hours
                 hide-clear-button ></vue-timepicker><br>
 
         <p class="text-left mb-1 mt-2">Step2: Select Where?</p>
@@ -511,50 +513,68 @@ export default {
       let mins = now.getMinutes();
 
       // If the user visits after 10pm change the date to the next day
-      if(hours > 21 && mins >=30){
-        this.date = now.getDate() + 1;
+      if(hours >= 21){
+        now.setDate(now.getDate() + 1);
+        this.date = now;
+
+        if(mins < 30){
+          this.fromTime.HH = "21";
+          this.fromTime.mm = "30";
+
+          this.toTime.HH = "22";
+          this.toTime.mm = "00";
+        }else{
+          this.fromTime.HH = "08";
+          this.fromTime.mm = "00";
+
+          this.toTime.HH = "09";
+          this.toTime.mm = "00";
+        }
+       
       }else{
         this.date = now;
+        // If the time visited is before 8am and after 10pm
+        // Set from Time to 8am and to time to 9am
+        if(hours < 8 || hours > 22){
+          this.fromTime.HH = "08";
+          this.fromTime.mm = "00";
+
+          this.toTime.HH = "09";
+          this.toTime.mm = "00";
+        }
+        else{
+          if(mins < 30){
+            mins = "30";
+          }else{
+            mins = "00";
+            hours++;
+          }
+          
+          //Set fromTime hours
+          if(hours < 10){
+            hours = "0" + hours;
+            this.fromTime.HH = hours;
+          }else{
+            this.fromTime.HH = hours + "";
+          }  
+          //Set fromTime mins
+          this.fromTime.mm = mins;
+
+          hours = parseInt(this.fromTime.HH) + 1;
+
+          //Set toTime hours
+          if(hours < 10){
+            hours = "0" + hours;
+            this.toTime.HH = hours;
+          }else{
+            this.toTime.HH = hours + "";
+          }  
+          //Set toTime mins
+          this.toTime.mm = mins;
+        }
       }
     
-      // If the time visited is before 8am and after 10pm
-      // Set from Time to 8am and to time to 9am
-      if(hours < 8 || hours > 22){
-        this.fromTime.HH = "08";
-        this.fromTime.mm = "00";
-
-        this.toTime.HH = "09";
-        this.toTime.mm = "00";
-      }else{
-        if(mins < 30){
-          mins = "30";
-        }else{
-          mins = "00";
-          hours++;
-        }
-        
-        //Set fromTime hours
-        if(hours < 10){
-          hours = "0" + hours;
-          this.fromTime.HH = hours;
-        }else{
-          this.fromTime.HH = hours + "";
-        }  
-        //Set fromTime mins
-        this.fromTime.mm = mins;
-
-        hours = parseInt(this.fromTime.HH) + 1;
-
-        //Set toTime hours
-        if(hours < 10){
-          hours = "0" + hours;
-          this.toTime.HH = hours;
-        }else{
-          this.toTime.HH = hours + "";
-        }  
-        //Set toTime mins
-        this.toTime.mm = mins;
-      }
+     
     },
     validateFomTimeEntered: function(){
       let toTimeHour = parseInt(this.toTime.HH);
@@ -572,6 +592,10 @@ export default {
           this.toTime.HH = fromTimeHour + "";
         }  
           this.toTime.mm = this.fromTime.mm;
+        
+        if( fromTimeHour == 22 ){
+          this.toTime.mm = "00";
+        }
       }
 
       if(toTimeHour == fromTimeHour && (toTimeMin <= fromTimeMin)){
@@ -583,6 +607,10 @@ export default {
           this.toTime.HH = fromTimeHour + "";
         }  
         this.toTime.mm = this.fromTime.mm;
+
+        if( fromTimeHour == 22 ){
+          this.toTime.mm = "00";
+        }
       }
 
       this.getBookingAvailability();
@@ -603,6 +631,11 @@ export default {
           this.fromTime.HH = toTimeHour + "";
         }  
           this.fromTime.mm = this.toTime.mm;
+
+        if( toTimeHour == 7 ){
+          this.fromTime.HH = "08";
+          this.fromTime.mm = "00";
+        }
       }
       
       if(toTimeHour == fromTimeHour && (toTimeMin <= fromTimeMin)){
@@ -614,6 +647,11 @@ export default {
           this.fromTime.HH = toTimeHour + "";
         }  
         this.fromTime.mm = this.toTime.mm;
+
+        if( toTimeHour == 7 ){
+          this.fromTime.HH = "08";
+          this.fromTime.mm = "00";
+        }
       }
 
       this.getBookingAvailability();
