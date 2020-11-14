@@ -10,6 +10,7 @@
       <b-col sm="12" md="6" lg="4" v-for="task in tasks" :key="task.id">
         <TaskCard
           :bookingDetails="task"
+          :coBookerMap="coBookerMap"
         />
       </b-col>
     </b-row>
@@ -32,6 +33,7 @@ export default {
   data() {
     return {
       tasks: {},
+      coBookerMap: {}
     };
   },
   computed :{
@@ -85,29 +87,46 @@ export default {
     fetchData: async function (){
       let userInfo = this.userInfo;
       let userID = userInfo.userID
+      let coBookerIDs = {};
       let data = await bookingsRef.once("value").then(function(snapshot) {
-          let data = snapshot.val();
-          let keys = Object.keys(data);
+        let data = snapshot.val();
+        let keys = Object.keys(data);
 
-          let dataFormatted = Object.values(data).map((val, index) => {
-            if (val != null){
-              if("coBookers" in val && userID in val.coBookers && (!val.coBookers[userID])){
+        let dataFormatted = Object.values(data).map((val, index) => {
+          if (val != null){
+            if("coBookers" in val && userID in val.coBookers){
+              coBookerIDs = {...coBookerIDs, ...val.coBookers};
+              if (!val.coBookers[userID]){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
               }
             }
-          })
+          }
+        })
 
-          dataFormatted = dataFormatted.filter(val => {
-            return val != null
-          })
-          dataFormatted = dataFormatted.filter(val => {
-            return val.status != "A"
-          })
-          console.log(dataFormatted);
-          return dataFormatted
+        dataFormatted = dataFormatted.filter(val => {
+          return val != null
+        })
+        console.log(dataFormatted)
+
+        return dataFormatted
       }).then(res => {return res})
 
-      this.tasks = data;
+      Object.keys(coBookerIDs).forEach(async (val) => {
+        let fullName = await userRef.child(val).once("value").then(function(snapshot) {
+            let data = snapshot.val();
+            return data.fullName
+        }).then(res => {return res})
+
+        coBookerIDs[val] = fullName;
+        
+      })
+      
+      this.coBookerMap = coBookerIDs;
+
+      setTimeout(()=> {
+        this.tasks = data;
+      }, 500)
+      
     }
   }
 };
