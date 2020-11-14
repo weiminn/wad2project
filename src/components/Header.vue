@@ -10,7 +10,7 @@
         <b-navbar-nav>
           <b-nav-item to="/">Home</b-nav-item>
           <b-nav-item to="/booking">My Bookings</b-nav-item>
-          <b-nav-item to="/tasks">Tasks <span class="text-danger text-bold"> ({{getPendingCount}})</span></b-nav-item>
+          <b-nav-item to="/tasks">Tasks <span class="text-danger text-bold"> <!--({{getPendingCount}})--></span></b-nav-item>
         </b-navbar-nav>
 
         <b-navbar-nav v-if='navWidth > 991' class="ml-auto">
@@ -40,7 +40,7 @@ export default {
   },
   computed:{
     getPendingCount:function(){
-      return 1;
+      return "";
     }
   },
   mounted() {

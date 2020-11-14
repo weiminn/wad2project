@@ -1,14 +1,25 @@
 <template>
 
-<b-container> 
-<b-jumbotron><h1>Your Bookings </h1></b-jumbotron> 
-<b-row v-if="bookings.length >0 ">
-  <b-col sm="12" md="6" lg="4" v-for="booking in this.bookings" :key="booking.id" >
-          <BookingCard
-          :bookingDetails="booking"
-        />
-      </b-col>
-</b-row>
+    <b-container fluid>
+        <b-jumbotron>
+            <h1>Your Bookings </h1>
+        </b-jumbotron>
+
+        <b-row>
+            <b-col sm="12" md="12"  sticky-header>
+                <b-table striped hover outlined :items="bookings" :fields="fields" v-if="bookings.length > 0 ">
+                    <template #cell(actions)="row">
+                    
+                        <b-button size="sm"  @click="Delete(row.item, row.index, $event.target)" class="btn btn-danger">
+                         Delete
+                        </b-button>
+                    </template>
+                </b-table>
+            </b-col>
+
+        </b-row>
+
+
 
 <b-row v-if="bookings.length == 0">
     <b-col sm="12" md="12">
@@ -20,11 +31,11 @@
 </template>
 
 <script>
-import BookingCard from "@/components/BookingCard";
 import app from "../firebase.service.js";
 
 const db = app.database();
 const bookingRef = db.ref("booking");
+// const userRef = db.ref("user");
 
 export default {
     mounted(){
@@ -34,18 +45,42 @@ export default {
       this.loadBookings(bookingRef,this.user);
     },
   components: {
-    BookingCard,
+ 
     
   },
   data() {
-    
-  return {
-      bookings: {},
-      user:Object,
-     
-    };
+      return {
+          bookings: {},
+          user: Object,
+          fields: [
+               'booking',
+                  'bookingStart',
+                     'bookingEnd',
+                        'purpose',
+                        'coBookers',
+
+              {
+                  key: 'actions',
+                  label: 'Actions'
+              }]
+      };
   },
   methods: {
+
+   Delete(item, index, button){
+        console.log(item);
+        console.log(index);
+        console.log(button);
+
+        let booking = bookingRef.child(item.id);
+        booking.remove()
+
+       this.bookings.splice(index,1);
+
+
+      //  this.bookings.filter((b)=>b.id ==item.id)
+   },
+
    async loadBookings(bookingRef,user){
       // bookingRef.once("value").then((snapshot) => {
       //   let data = snapshot.val();
@@ -53,6 +88,14 @@ export default {
        
       // });
 
+    // this.coBookers_names = await Promise.all(Object.keys(this.coBookers).map(async (val) => {
+    //   let fullName = await userRef.child(val).once("value").then(function(snapshot) {
+    //       let data = snapshot.val();
+    //       return data.fullName
+    //   }).then(res => {return res})  
+      
+    //   return fullName
+    // }))
 
       let data = await bookingRef.once("value").then(function(snapshot) {
           let data = snapshot.val();
@@ -69,18 +112,14 @@ export default {
           dataFormatted = dataFormatted.filter(val => {
             return val != null
           })
-        //   .filter(val => {
-        //     return new Date(val.bookingEnd).getTime() > new Date().getTime()
-        //   })
-          .filter(val => {
-            return val.status != "P" 
-          }).filter(val => {
-            return val.status != "p" 
-          })
+     
         //   console.log(dataFormatted)
           return dataFormatted
       }).then(res => {return res})
-    console.log(data)
+     
+           
+
+
         this.bookings = data;
     }
   }
