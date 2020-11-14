@@ -5,7 +5,7 @@
         <form-wizard
           @on-complete="onComplete"
           :title="title"
-          :subtitle ="subtitle"
+          :subtitle="subtitle"
           shape="tab"
           color="#102B72"
         >
@@ -112,7 +112,7 @@
                       required
                     >
                       <template v-slot:first>
-                        <option value="interview">Interview-</option>
+                        <option value="interview">Interview</option>
                         <option value="meeting">Meeting</option>
                         <option value="research">Research</option>
                         <option value="seminar">Seminar</option>
@@ -155,25 +155,29 @@
               <h5>Add Co-bookers</h5>
               <b-row class="d-flex justify-content-center">
                 <b-col sm="12" md="12" lg="9">
-                  <b-input-group size="md">
-                    <b-input-group-prepend is-text>
-                      <b-icon icon="search"></b-icon>
-                    </b-input-group-prepend>
-                    <b-form-input
-                      v-model="filter"
-                      type="search"
-                      id="filterInput"
-                      placeholder="Type to Search"
-                    ></b-form-input>
-                    <b-input-group-append>
-                      <b-button variant="outline-info" @click="filter = ''"
-                        >Clear</b-button
-                      >
-                    </b-input-group-append>
-                  </b-input-group>
-                  <div v-for="item in items" :key="item">{{item.first_name +" "+ item.email}}</div>
+    
 
-                  <b-check
+                      <!--  @close="rePopulate()" 
+                      @remove="rePopulate()"  -->
+                  <multiselect  
+                      @close="addCoBookersFinal()"
+                      v-model="selectedCobooker" 
+                      placeholder="Add a co-booker" 
+                      label="cobooker" 
+                      track-by="value" 
+                      :options="cobookers" 
+                      :searchable="true"
+                      :max="noOfCoBookersAllowed"
+                      :show-labels="false" 
+                      :multiple="true" 
+                      :taggable="false" 
+                      :close-on-select="false"
+                      @search-change="updateNo"
+                      @tag="addCoBookers"></multiselect>
+                      
+
+                  <br>
+                  <b-check 
                       v-model="checkSend"
                       id="checkSend"
                       :checked="checkSend"
@@ -181,35 +185,7 @@
                     >
                 </b-col>
               </b-row>
-              <div class="d-flex justify-content-center">
-                <b-table
-                  class="col-md-12 col-lg-9 col-sm-12"
-                  ref="selectedTable"
-                  ef="selectableTable"
-                  selectable
-                  :items="items"
-                  :fields="fields"
-                  responsive="sm"
-                  @row-selected="onRowSelected"
-                  caption-top
-                  :filter="filter"
-                >
-                  <template #table-caption></template>
-
-                  <template #cell(selected)="{ rowSelected }">
-                    <template v-if="rowSelected">
-                      <span aria-hidden="true">&check;</span>
-                      <span class="sr-only">Selected</span>
-                    </template>
-                    <template v-else>
-                      <span aria-hidden="true">&nbsp;</span>
-                      <span class="sr-only">Not selected</span>
-                    </template>
-                  </template>
-                </b-table>
-              </div>
-
-              <hr style="border: solid 1px #cccccc" />
+          
             </div>
 
             <div id="resources">
@@ -234,24 +210,26 @@
                 </b-col>
               </b-row>
 
-              <div class="d-flex justify-content-center">
-                <b-table
-                  class="col-md-12 col-lg-9 col-sm-12"
-                  ref="selectableURLTable"
-                  :items="urlItems"
-                  :fields="urlFields"
-                  responsive="sm"
-                  caption-top
-                >
-                  <template #cell(actions)="row">
-                    <template v-if="row">
-                      <b-button size="sm" @click="onURLRowSelected(row.item)">
-                        Remove
-                      </b-button>
+              <b-row class="d-flex justify-content-center">
+                <b-col sm="12" md="12" lg="9">
+                  <b-table
+                    style="table-layout: fixed;"
+                    ref="selectableURLTable"
+                    :items="urlItems"
+                    :fields="urlFields"
+                    responsive="sm"
+                    caption-top
+                  >
+                    <template #cell(actions)="row">
+                      <template v-if="row">
+                        <b-button size="sm" @click="onURLRowSelected(row.item)">
+                          Remove
+                        </b-button>
+                      </template>
                     </template>
-                  </template>
-                </b-table>
-              </div>
+                  </b-table>
+                </b-col>
+              </b-row>
             </div>
           </tab-content>
 
@@ -321,6 +299,7 @@
 <script>
 import moment from "moment";
 import app from "../firebase.service.js";
+import Multiselect from 'vue-multiselect';
 
 const db = app.database();
 const userRef = db.ref("user");
@@ -341,19 +320,24 @@ export default {
     return {
       filter: "",
       usetype: ["Academic"],
-      fields: ["selected", "first_name", "email"],
-      items: [],
+      // fields: ["selected", "first_name", "email"],
+      // items: [],
       urlFields: ["URL", { key: "actions", label: "Actions" }],
       urlItems: [],
       purpose: "",
       link: "",
       URLselected: [],
-      cobookers: [],
       cal: "",
       bookingUsage: "",
       checkSend : false,
       checkSelected: false,
+      selectedCobooker: null,
+      cobookers: [],
+      noOfCoBookersAllowed: 1
     };
+  },
+  components: {
+    Multiselect
   },
   methods: {
     postData: async function (url, data) {
@@ -372,14 +356,10 @@ export default {
     },
 
     onComplete: async function () {
-      // var num;
-      // bookingRef.on("value", function (snapshot) {
-      //   num = snapshot.numChildren();
-      // });
-      var userInfo = this.userInfo;
-      var userID = userInfo.userID;
-      console.log(userID);
-      var cobookersInfo = this.cobookers;
+      // var userInfo = this.userInfo;
+      // var userID = userInfo.userID;
+      // console.log(userID);
+      var cobookersInfo = this.selectedCobooker;
       var cobookersEmail = [];
       var users;
       var booker = this.$store.state.userInfo.userID;
@@ -387,7 +367,7 @@ export default {
         userRef.on("value", function (snapshot) {
           users = snapshot.val();
         });
-        cobookersEmail.push(cobookersInfo[prop]["email"]);
+        cobookersEmail.push(cobookersInfo[prop]["value"]);
       }
 
       var cobookersID = [];
@@ -440,6 +420,7 @@ export default {
           );
          
           if (isValid) {
+            // console.log(cobookersID)
             bookingRef.push({
               booking: this.facility,
               bookingStart: start,
@@ -477,7 +458,7 @@ export default {
                 emailForm.append("content","Please confirm " + this.facility + " booking" );
                 emailForm.append("recipient", individualEmail);
                 emailForm.append("attachment", blob, "calendar.ics");
-                //var emailContent = [emailForm];
+                // var emailContent = [emailForm];
                 this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
             }
            
@@ -491,17 +472,13 @@ export default {
                 let emailForm = new FormData();
                 emailForm.append("content","Please confirm " + this.facility + " booking" );
                 emailForm.append("recipient", individualEmail);
-                //var emailContent = [emailForm];
-               this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
-              // console.log(result)
-
-              
+                // var emailContent = [emailForm];
+                this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
+                // console.log(result)
             }
 
             }
-            
-            
-
+          
             this.$router.push({
               name: "Booking",
             });
@@ -554,7 +531,6 @@ export default {
       this.urlItems.push(my_url);
       this.link = "";
     },
-
     onURLRowSelected(items) {
       this.selected = items;
       var urlvalue = this.selected.URL;
@@ -563,13 +539,26 @@ export default {
         return el.URL != urlvalue;
       });
     },
-
-    onRowSelected(items) {
-      // userRef.on("value", function (snapshot) {
-      //   console.log(snapshot.val());
-      // });
-      this.cobookers = items;
+    addCoBookers (newTag) {
+      const tag = {
+        name: newTag,
+        code: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
+      }
+      this.selectedCobooker.push(tag);
+      this.cobookers.push(tag);
     },
+    getMaxCoBookers: function(){
+      let facilityType = this.$route.params.selectedTiming.booking.split(" ")[1];
+
+      if(facilityType == "GSR"){
+          this.noOfCoBookersAllowed = 1;
+      }else{
+        this.noOfCoBookersAllowed = 2;
+      }
+    },
+    addCoBookersFinal: function(){
+      console.log(this.selectedCobooker);
+    }
   },
 
   mounted() {
@@ -579,14 +568,19 @@ export default {
    
     });
 
+
+    this.getMaxCoBookers();
+
+    
     for (var props in tablerows) {
       if (this.$store.state.userInfo.userID != props) {
-        this.items.push({
-          first_name: tablerows[props]["fullName"],
-          email: tablerows[props]["email"],
+        this.cobookers.push({
+          cobooker: tablerows[props]["fullName"]+" ("+tablerows[props]["email"]+")",
+          value: tablerows[props]["email"]
         });
       }
     }
+
   },
   computed: {
     userInfo() {
@@ -595,21 +589,22 @@ export default {
   },
   watch: {
     usetype: function () {
-      if (this.items.length == 0) {
+      if (this.cobookers.length == 0) {
         var tablerows;
         userRef.on("value", function (snapshot) {
           tablerows = snapshot.val();
           // console.log(tablerows);
         });
 
-        for (var props in tablerows) {
-          if (this.$store.state.userInfo.userID != props) {
-            this.items.push({
-              first_name: tablerows[props]["fullName"],
-              email: tablerows[props]["email"],
-            });
+        {{this.facility}}
+         for (var props in tablerows) {
+            if (this.$store.state.userInfo.userID != props) {
+              this.cobookers.push({
+                cobooker: tablerows[props]["fullName"]+" ("+tablerows[props]["email"]+")",
+                value: tablerows[props]["email"]
+              });
+            }
           }
-        }
       }
     },
   },
@@ -617,6 +612,13 @@ export default {
 </script>
 
 <style>
+table {border-collapse:collapse; table-layout:fixed; }
+table td {width:400px; word-wrap:break-word;}
+
+.vue-form-wizard .wizard-tab-content {
+  padding:30px 0px 10px;
+}
+
 .input-group {
   margin-bottom: 10px;
 }
