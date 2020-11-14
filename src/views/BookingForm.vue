@@ -2,7 +2,6 @@
   <Wizard
     :title="title"
     :bookingDate="bookingDate"
-    :facilityOptions="facilityOptions"
     :facility="facility"
     :from="from"
     :to="to"
@@ -37,7 +36,7 @@ export default {
       this.$data.to = moment(this.selectedTiming.bookingEnd,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
 
       console.log(this.$data.from)
-      this.$data.facilityOptions.push(this.selectedTiming.booking);
+    
       this.$data.facility = this.selectedTiming.booking;
   },
 
@@ -47,7 +46,6 @@ export default {
       title: "Facility Booking",
       subtitle:"",
       bookingDate: "",
-      facilityOptions: [],
       facility: "",
       from: "",
       to: ""

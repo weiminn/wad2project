@@ -64,15 +64,15 @@
               >
                 <b-col sm="12" md="12" lg="8">
                   <b-input-group size="md" prepend="Facility">
-                    <b-form-select
-                      name="facility"
+                    <b-input
+                      v-model="facility"
                       id="facility"
                       :value="facility"
-                      :options="facilityOptions"
+                      placeholder="Enter purpose of booking"
                       disabled
-                    >
+                    ></b-input>
                       <template v-slot:first> </template>
-                    </b-form-select>
+                   
                   </b-input-group>
                 </b-col>
               </b-row>
@@ -172,9 +172,8 @@
                       :multiple="true" 
                       :taggable="false" 
                       :close-on-select="false"
-                      @search-change="updateNo"
                       @tag="addCoBookers"></multiselect>
-                      
+                       
 
                   <br>
                   <b-check 
@@ -310,7 +309,7 @@ export default {
     title: String,
     subtitle: String,
     bookingDate: String,
-    facilityOptions: [],
+    
     from: String,
     to: String,
     facility: String,
