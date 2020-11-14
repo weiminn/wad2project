@@ -171,7 +171,7 @@
                       :show-labels="false" 
                       :multiple="true" 
                       :taggable="false" 
-                      :close-on-select="false"
+                      :close-on-select="true"
                       @tag="addCoBookers"></multiselect>
                        
 
