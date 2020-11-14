@@ -1,16 +1,12 @@
 <template>
-
+ 
     <b-container fluid>
         <b-jumbotron>
             <h1>Your Bookings </h1>
         </b-jumbotron>
-
-        <b-row>
-            <b-col sm="12" md="12" sticky-header>
-                <div class='table-responsive'>
-                    <b-table striped hover outlined :items="bookings" :fields="fields" v-if="bookings.length > 0 "
-                        responsive="sm">
-
+               
+                     <b-table striped hover outlined :items="bookings" :fields="fields" v-if="bookings.length > 0 "
+                        responsive="md" stacked="sm">
                         <template #cell(actions)="row">
                             <b-button size="sm" @click="Delete(row.item, row.index, $event.target)"
                                 class="btn btn-danger">
@@ -18,12 +14,6 @@
                             </b-button>
                         </template>
                     </b-table>
-                </div>
-            </b-col>
-
-        </b-row>
-
-
 
         <b-row v-if="bookings.length == 0">
             <b-col sm="12" md="12">
@@ -57,18 +47,8 @@ export default {
           bookings: {},
           user: Object,
           fields: [
-                {
-                      key:'booking',
-                      label:'Booking ',
-                      sortable:true
-                }
-                  ,
-                  {
-                      key:'bookingStart',
-                      label:'Booking Start',
-                      sortable:true
-
-                  },
+               'booking',
+                  'bookingStart',
                      'bookingEnd',
                         'purpose',
                         'coBookers',
@@ -144,4 +124,8 @@ export default {
        
   }
 </script>
-
+<style lang="stylus">
+.table td, .table th{
+    width :100%;
+}
+</style>
