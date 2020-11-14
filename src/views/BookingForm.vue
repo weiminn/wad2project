@@ -22,17 +22,25 @@ export default {
   mounted() {
     //   console.log("PASSED IN FROM WEIMINN");"2020-12-10"
       this.selectedTiming = this.$route.params.selectedTiming;
-      console.log( this.$route.params.selectedTiming);
-       this.$data.bookingDate = moment(this.selectedTiming.bookingStart).format("YYYY-MM-DD").toString();
-      // this.$data.date = (new Date(this.selectedTiming.bookingStart)).getMonth().toString() + "/" +
-      //  (new Date(this.selectedTiming.bookingStart)).getDate().toString() + "/" +
-      //  (new Date(this.selectedTiming.bookingStart)).getFullYear().toString();
-      
-      
+    
+ this.$data.bookingDate=''
+     this.$data.from=''
+       this.$data.to=''
+    if(this.selectedTiming.bookingStart.includes('/')){
+        this.$data.bookingDate = moment(this.selectedTiming.bookingStart).format("YYYY-MM-DD").toString();
+
       this.$data.from = moment(this.selectedTiming.bookingStart).format("HH:mm:ss").toString();
       this.$data.to = moment(this.selectedTiming.bookingEnd).format("HH:mm:ss").toString();
+    }
+    else{
+   this.$data.bookingDate = moment(this.selectedTiming.bookingStart,"DD-MM-YYYY").format("YYYY-MM-DD").toString();
 
-      console.log(this.$data.from)
+      this.$data.from = moment(this.selectedTiming.bookingStart,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
+      this.$data.to = moment(this.selectedTiming.bookingEnd,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
+
+    }
+     
+     
     
       this.$data.facility = this.selectedTiming.booking;
   },
