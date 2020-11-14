@@ -6,28 +6,32 @@
         </b-jumbotron>
 
         <b-row>
-            <b-col sm="12" md="12"  sticky-header>
-                <b-table striped hover outlined :items="bookings" :fields="fields" v-if="bookings.length > 0 ">
-                    <template #cell(actions)="row">
-                    
-                        <b-button size="sm"  @click="Delete(row.item, row.index, $event.target)" class="btn btn-danger">
-                         Delete
-                        </b-button>
-                    </template>
-                </b-table>
+            <b-col sm="12" md="12" sticky-header>
+                <div class='table-responsive'>
+                    <b-table striped hover outlined :items="bookings" :fields="fields" v-if="bookings.length > 0 "
+                        responsive="sm">
+
+                        <template #cell(actions)="row">
+                            <b-button size="sm" @click="Delete(row.item, row.index, $event.target)"
+                                class="btn btn-danger">
+                                Delete
+                            </b-button>
+                        </template>
+                    </b-table>
+                </div>
             </b-col>
 
         </b-row>
 
 
 
-<b-row v-if="bookings.length == 0">
-    <b-col sm="12" md="12">
-         <h3 class="mx-auto"> No bookings available! <a href="/">Create</a> a booking maybe?</h3>
-    </b-col>
-    
-</b-row>
-</b-container>
+        <b-row v-if="bookings.length == 0">
+            <b-col sm="12" md="12">
+                <h3 class="mx-auto"> No bookings available! <a href="/">Create</a> a booking maybe?</h3>
+            </b-col>
+
+        </b-row>
+    </b-container>
 </template>
 
 <script>
@@ -53,8 +57,18 @@ export default {
           bookings: {},
           user: Object,
           fields: [
-               'booking',
-                  'bookingStart',
+                {
+                      key:'booking',
+                      label:'Booking ',
+                      sortable:true
+                }
+                  ,
+                  {
+                      key:'bookingStart',
+                      label:'Booking Start',
+                      sortable:true
+
+                  },
                      'bookingEnd',
                         'purpose',
                         'coBookers',
