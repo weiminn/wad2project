@@ -285,11 +285,12 @@ export default {
             this.$refs['my-modal'].toggle('#toggle-btn')
         },
         scrollToCurrentTime() {
-            // console.log("Scrolling");
+            console.log("Scrolling");
             if(
                 new Date(this.$route.params.data.toDateTime).getDate().toString() == (new Date()).getDate().toString() &&
                 new Date(this.$route.params.data.toDateTime).getMonth().toString() == (new Date()).getMonth().toString() &&
-                new Date(this.$route.params.data.toDateTime).getFullYear().toString() == (new Date()).getFullYear().toString()
+                new Date(this.$route.params.data.toDateTime).getFullYear().toString() == (new Date()).getFullYear().toString() &&
+                (new Date()).getHours() > 10
                 ){
                 const calendar = document.querySelector('#vuecal .vuecal__bg');
                 const hours = (new Date()).getHours() + (new Date()).getMinutes() / 60;
