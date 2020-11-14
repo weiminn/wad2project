@@ -23,17 +23,14 @@ export default {
     //   console.log("PASSED IN FROM WEIMINN");"2020-12-10"
       this.selectedTiming = this.$route.params.selectedTiming;
       console.log( this.$route.params.selectedTiming);
-       this.$data.bookingDate = moment(this.selectedTiming.bookingStart,"DD-MM-YYYY").format("YYYY-MM-DD").toString();
+       this.$data.bookingDate = moment(this.selectedTiming.bookingStart).format("YYYY-MM-DD").toString();
       // this.$data.date = (new Date(this.selectedTiming.bookingStart)).getMonth().toString() + "/" +
       //  (new Date(this.selectedTiming.bookingStart)).getDate().toString() + "/" +
       //  (new Date(this.selectedTiming.bookingStart)).getFullYear().toString();
       
-     
-     
-
       
-      this.$data.from = moment(this.selectedTiming.bookingStart,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
-      this.$data.to = moment(this.selectedTiming.bookingEnd,"DD-MM-YYYY, hh:mm:ss").format("HH:mm:ss").toString();
+      this.$data.from = moment(this.selectedTiming.bookingStart).format("HH:mm:ss").toString();
+      this.$data.to = moment(this.selectedTiming.bookingEnd).format("HH:mm:ss").toString();
 
       console.log(this.$data.from)
     
