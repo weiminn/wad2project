@@ -9,12 +9,37 @@
         </b-dropdown>
 
         <p class="text-left mb-1"> Step1: Select When?</p> 
-        <b-form-datepicker @context="validateFomTimeEntered" value-as-date id="datepicker" placeholder="Select Date" v-model="date" class="mb-2"></b-form-datepicker>
+        <b-form-datepicker
+                @context="validateFomTimeEntered" 
+                value-as-date id="datepicker" 
+                placeholder="Select Date" 
+                v-model="date" 
+                class="mb-2"></b-form-datepicker>
 
-        <vue-timepicker @close="validateFomTimeEntered" auto-scroll class="mr-2" input-width="100px" id="fromTime" format="HH:mm" v-model="fromTime" :minute-interval="30" hide-clear-button ></vue-timepicker>
-        <vue-timepicker @close="validateToTimeEntered" auto-scroll input-width="100px" id="toTime" format="HH:mm" v-model="toTime" :minute-interval="30" hide-clear-button ></vue-timepicker><br>
+        <vue-timepicker 
+                @close="validateFomTimeEntered" 
+                auto-scroll 
+                class="mr-2"
+                input-width="100px" 
+                id="fromTime" 
+                format="HH:mm" 
+                v-model="fromTime" 
+                :minute-interval="30" 
+                :hour-range="[[8, 21]]"
+                hide-clear-button ></vue-timepicker>
 
-        <span class="float-left">Step2: Select Where?</span><br>
+        <vue-timepicker 
+                @close="validateToTimeEntered" 
+                auto-scroll 
+                input-width="100px" 
+                id="toTime" 
+                format="HH:mm" 
+                v-model="toTime" 
+                :minute-interval="30" 
+                :hour-range="[[8, 22]]"
+                hide-clear-button ></vue-timepicker><br>
+
+        <p class="text-left mb-1 mt-2">Step2: Select Where?</p>
       
         <div class="smuMap p-2 rounded w-100">
           <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -481,47 +506,55 @@ export default {
   methods: {
     displayTime: function(){
       let now = new Date();
-      this.date = now;
-      
+
       let hours = now.getHours();
       let mins = now.getMinutes();
 
-      if(mins < 30){
-        mins = "30";
+      // If the user visits after 10pm change the date to the next day
+      if(hours > 21 && mins >=30){
+        this.date = now.getDate() + 1;
       }else{
-        mins = "00";
-        hours++;
+        this.date = now;
       }
+    
+      // If the time visited is before 8am and after 10pm
+      // Set from Time to 8am and to time to 9am
+      if(hours < 8 || hours > 22){
+        this.fromTime.HH = "08";
+        this.fromTime.mm = "00";
 
-      this.fromTime.mm = mins;
-
-      if(hours < 10){
-        hours = "0" + hours;
-        this.fromTime.HH = hours;
-      }else{
-        this.fromTime.HH = hours + "";
-      }  
-      
-      if(this.fromTime.mm == "00"){
+        this.toTime.HH = "09";
         this.toTime.mm = "00";
       }else{
-        this.toTime.mm = "30";
-      }
+        if(mins < 30){
+          mins = "30";
+        }else{
+          mins = "00";
+          hours++;
+        }
+        
+        //Set fromTime hours
+        if(hours < 10){
+          hours = "0" + hours;
+          this.fromTime.HH = hours;
+        }else{
+          this.fromTime.HH = hours + "";
+        }  
+        //Set fromTime mins
+        this.fromTime.mm = mins;
 
-      hours = parseInt(this.fromTime.HH) + 1;
+        hours = parseInt(this.fromTime.HH) + 1;
 
-      if(hours < 10){
-        hours = "0" + hours;
-        this.toTime.HH = hours;
-      }else{
-        if(hours == 24){
-          // console.log(hours)
-          this.toTime.HH = "00";
-          this.toTime.mm = "00";
+        //Set toTime hours
+        if(hours < 10){
+          hours = "0" + hours;
+          this.toTime.HH = hours;
         }else{
           this.toTime.HH = hours + "";
-        }
-      }  
+        }  
+        //Set toTime mins
+        this.toTime.mm = mins;
+      }
     },
     validateFomTimeEntered: function(){
       let toTimeHour = parseInt(this.toTime.HH);
@@ -599,7 +632,7 @@ export default {
         code: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
       }
       this.facilityType.push(tag);
-      this.selectedType.push(tag);
+      this.selectedType.push(tag);1
     },
     rePopulate: function(){     
       let selectedSchoolsArray = this.selectedSchools;
@@ -854,6 +887,13 @@ export default {
 
   .smuMap path{
     fill:#6D757D;
+  }
+
+  .vue__time-picker .dropdown ul li:not([disabled]).active, 
+  .vue__time-picker .dropdown ul li:not([disabled]).active:hover, 
+  .vue__time-picker .dropdown ul li:not([disabled]).active:focus {
+    background:#102B72;
+    color:#fff;
   }
 
   /* @media (hover: hover) and (pointer: fine) {
