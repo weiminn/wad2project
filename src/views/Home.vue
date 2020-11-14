@@ -3,9 +3,15 @@
     <b-row class="justify-content-md-center"  no-gutters>
       <b-col md="4" lg="4" class="mb-4" no-gutters >
 
-        <b-dropdown id="FavouriteBookings" text="Book Again" class="mb-2 w-50"  menu-class="w-100" >
-          <b-dropdown-item>SIS-GSR2.2</b-dropdown-item>
-          <b-dropdown-item>SIS-GSR2.3</b-dropdown-item>
+      
+        <b-dropdown v-if="filteredPastFacilitiesByMonth.length == 0" id="FavouriteBookings" text="Book Again" class="mb-2 w-75"  menu-class="w-100" >
+          <b-dropdown-text >You have not made any bookings in the past month. Make a booking now to view it here in the future :)</b-dropdown-text>
+        </b-dropdown>
+        <b-dropdown v-else-if="facilitiesAvailableForRebooking.length == 0 " id="FavouriteBookings" text="Book Again" class="mb-2 w-75"  menu-class="w-100" >
+          <b-dropdown-text >All your past facilities booked are currently unavailable, try changing to another time slot</b-dropdown-text>
+        </b-dropdown>
+         <b-dropdown v-else id="FavouriteBookings" text="Book Again" class="mb-2 w-75"  menu-class="w-100" >
+          <b-dropdown-item @click="selectedFacilitiesFromPastBooking(facility)" v-for='facility in facilitiesAvailableForRebooking' :key="facility">{{facility}}</b-dropdown-item>
         </b-dropdown>
 
         <p class="text-left mb-1"> Step1: Select When?</p> 
@@ -490,7 +496,10 @@ export default {
         //                             "Connextion":{"Class": "Unavail","GSR": "Unavail","Seminar": "Unavail"},
         //                             "Admin":{"Class": "Unavail","GSR": "Unavail","Seminar": "Unavail"}
         //                           },
-        currentAvailableFacilities: null
+        currentAvailableFacilities: null,
+        userPastBookings : [],
+        filteredPastFacilitiesByMonth: [],
+        facilitiesAvailableForRebooking: []
 
       }
   },
@@ -501,6 +510,7 @@ export default {
   mounted() {
     this.displayTime();
     this.getBookingAvailability();
+    this.getPastBookings();
     window.addEventListener('resize', () => {
       this.windowWidth = window.innerWidth;
     });
@@ -512,7 +522,9 @@ export default {
       let hours = now.getHours();
       let mins = now.getMinutes();
 
-      // If the user visits after 10pm change the date to the next day
+      // If the time visited is after 9.30pm 
+      // Set date to next day
+      // Set from Time to 8am and to time to 9am 
       if(hours >= 21){
         now.setDate(now.getDate() + 1);
         this.date = now;
@@ -533,9 +545,9 @@ export default {
        
       }else{
         this.date = now;
-        // If the time visited is before 8am and after 10pm
+        // If the time visited is before 8am 
         // Set from Time to 8am and to time to 9am
-        if(hours < 8 || hours > 22){
+        if(hours < 8){
           this.fromTime.HH = "08";
           this.fromTime.mm = "00";
 
@@ -614,6 +626,7 @@ export default {
       }
 
       this.getBookingAvailability();
+      this.getPastBookings();
     },
     validateToTimeEntered: function(){
       let toTimeHour = parseInt(this.toTime.HH);
@@ -655,6 +668,7 @@ export default {
       }
 
       this.getBookingAvailability();
+      this.getPastBookings();
     },
     addTagFloors (newTag) {
       const tag = {
@@ -881,6 +895,234 @@ export default {
 
           })
       })
+    },
+    getPastBookings: function(){
+
+      let userID = this.$store.state.userInfo.userID;
+      console.log("User id is:"  + userID);
+
+      bookings.once("value").then((snapshot) => {
+          let data = snapshot.val();
+
+          Object.values(data).filter((booking)=>{
+
+            if(userID == booking.booker){
+       
+              this.userPastBookings.push({
+                bookingStartDateTime : booking.bookingStart,
+                facility : booking.booking
+              });
+            }
+          
+          })
+        this.filterPastBookings();
+      })
+
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-15-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-1"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-18-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-2"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-16-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-3"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-01-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-4"
+      // });
+      //      this.userPastBookings.push({
+      //   bookingStartDateTime : "10-14-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-5"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-12-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-1"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-14-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 3-1"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-07-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 3-3"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-06-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 3-3"
+      // });
+
+
+
+      //       this.userPastBookings.push({
+      //   bookingStartDateTime : "10-15-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-1"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-18-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-2"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-16-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-3"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-01-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-4"
+      // });
+      //      this.userPastBookings.push({
+      //   bookingStartDateTime : "10-14-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-5"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "10-12-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 2-1"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-05-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 3-3"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-06-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 3-3"
+      // });
+      // this.userPastBookings.push({
+      //   bookingStartDateTime : "11-07-2020, 03:30:00 PM",
+      //   facility : "SIS GSR 3-3"
+      // });
+
+    },
+    filterPastBookings: function(){
+     
+      let pastBookings = this.userPastBookings;
+      //console.log(pastBookings);
+
+      //Sort the objects by date
+      pastBookings.sort(function(a,b){
+        //console.log(new Date(b.bookingStartDateTime) - new Date(a.bookingStartDateTime));
+        return new Date(b.bookingStartDateTime) - new Date(a.bookingStartDateTime);
+      });
+
+      let now = new Date();
+      now.setMonth(now.getMonth() - 1);
+
+      // console.log(now);
+
+      // Add bookings facilities into new array that are made from the past month
+      for(let booking of pastBookings){
+
+        let date = new Date(booking.bookingStartDateTime);
+        if( date > now){
+          this.filteredPastFacilitiesByMonth.push(booking.facility);
+        }
+      }
+
+      //Remove all similar facilities
+      this.filteredPastFacilitiesByMonth = [...new Set(this.filteredPastFacilitiesByMonth)];
+
+      //If more than 5 bookings just take the latest 5 unique booking made by user.
+      if(this.filteredPastFacilitiesByMonth.length > 5){
+        this.filteredPastFacilitiesByMonth.splice(5);
+      }
+      console.log( this.filteredPastFacilitiesByMonth );
+
+
+      this.checkIfPastBookingAreAvailableInSystem();
+    },
+    checkIfPastBookingAreAvailableInSystem: function(){
+      if(this.filteredPastFacilitiesByMonth == null || this.filteredPastFacilitiesByMonth.length == 0){
+        console.log("You have no past bookings in the past month");
+      }else{
+        console.log("You have past bookings in the past month");
+
+        bookings.once("value").then((snapshot) => {
+          let data = snapshot.val();
+
+          let fromDateTime = new Date(this.date);
+          let toDateTime = new Date(this.date);
+
+          fromDateTime.setHours( this.fromTime.HH,this.fromTime.mm,0,0 );
+          toDateTime.setHours( this.toTime.HH,this.toTime.mm,0,0 );
+
+          let facilitiesBookedInPastMonth = this.filteredPastFacilitiesByMonth;
+          let rejectedFacilities = [];
+
+          Object.values(data).filter((booking)=>{
+
+            //console.log(booking);
+
+            if(facilitiesBookedInPastMonth.includes(booking.booking)){
+
+              let bookingStartTime = new Date(booking.bookingStart);
+              let bookingEndTime = new Date(booking.bookingEnd);
+              
+              // Only proceed if its the same date
+              if(bookingStartTime.toLocaleDateString() === fromDateTime.toLocaleDateString()){
+                // console.log("Yo same date");
+
+                //Checks to see if there is an overlap between requested time and booking time
+                if( bookingEndTime.getTime() > fromDateTime.getTime()  &&
+                      toDateTime.getTime() > bookingStartTime.getTime()){
+
+                  rejectedFacilities.push(booking.booking);
+
+                  // console.log("Collision");
+                  // let school = booking.booking.split(" ")[0];
+                  // let facilityType = booking.booking.split(" ")[1];
+                  // currentAvailableFacilities[school][facilityType]--;  
+
+                }
+                // else{
+                //     console.log("No Collision");
+                // }
+                // console.log(this.currentAvailableFacilities);
+                // console.log("YOOO THIS->" + this.defaultSchoolFacilities);
+                // console.log(this.defaultSchoolFacilities);
+              }
+              // this.currentAvailableFacilities = currentAvailableFacilities;
+            }
+          })
+
+          var mySet = new Set(facilitiesBookedInPastMonth);
+          var valuesToRemove = new Set(rejectedFacilities);
+
+          function removeAll(originalSet, toBeRemovedSet) {
+              toBeRemovedSet.forEach(Set.prototype.delete, originalSet);
+          }
+
+          // console.log([...mySet]);
+          removeAll(mySet, valuesToRemove);
+          // console.log([...mySet]);
+
+          this.facilitiesAvailableForRebooking = [...mySet];
+          console.log(this.facilitiesAvailableForRebooking);
+      
+        })
+        
+      }
+      
+    },
+    selectedFacilitiesFromPastBooking: function(facil){
+
+      this.selectedFacility= [ facil ];
+
+      let fromDateTime = new Date(this.date);
+      let toDateTime = new Date(this.date);
+
+      fromDateTime.setHours( this.fromTime.HH,this.fromTime.mm,0,0 );
+      toDateTime.setHours( this.toTime.HH,this.toTime.mm,0,0 );
+
+      this.$router.push({
+        name: 'Schedule',
+        params:{data: {
+                fromDateTime : fromDateTime,
+                toDateTime : toDateTime,
+                selectedFacilities: this.selectedFacility}}
+      })
+
     }
   },
   watch:{
