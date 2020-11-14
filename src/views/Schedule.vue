@@ -261,8 +261,8 @@ export default {
                 name: 'BookingForm',
                 params: {
                     selectedTiming: {
-                        bookingStart: this.selectedArr[0].start.toLocaleString(),
-                        bookingEnd: this.selectedArr[0].end.toLocaleString(),
+                        bookingStart: this.selectedArr[0].start,
+                        bookingEnd: this.selectedArr[0].end,
                         booking: this.daySplits.filter(s => s.id == this.selectedArr[0].split)[0].label
                     }
                 }
