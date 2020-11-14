@@ -105,7 +105,8 @@ export default {
             daySplits: [],
             valid: false,
             params:{ title: false, drag: false, resize: true, delete: true, create: true },
-            timeCellHeight: 40
+            timeCellHeight: 40,
+            toastShown: false
         };
     },
     methods: {
@@ -134,7 +135,6 @@ export default {
                 // populate bookings for the rooms
                 _books.forEach(b => {
                     for (const s of this.daySplits) {
-                        // console.log('checking: ' + s.id + " " + s.label + " with " + b.booking);
                         if(s.label == b.booking) {
                             b.split = s.id;
                         };
@@ -207,7 +207,6 @@ export default {
             }
 
             for (var index = 0; index < this.books.length; index++) {
-                console.log("loopin'");
                 if(this.books[index].split == this.selectedArr[0].split){
                     if (
                         ((new Date(this.selectedArr[0].start)) <= (new Date(this.books[index].start)) && 
@@ -239,6 +238,7 @@ export default {
                     if(clear){
                         if((this.selectedArr[0].end - this.selectedArr[0].start)/(3600000) <= 4){
                             this.valid = true;
+                            this.showToast();
                         } else {
                             console.log("Invalid Timing!");
                             this.valid = false;
@@ -298,6 +298,20 @@ export default {
             }
             
         },
+        showToast() {
+            if(!this.toastShown){
+                this.$bvToast.toast(`Press and Hold on the selected time slot to delete.`, {
+                    title: `How to Delete`,
+                    toaster: 'b-toaster-bottom-center',
+                    solid: true,
+                    noAutoHide: true,
+                    appendToast: true,
+                    variant: "info"
+                })
+                this.toastShown = true;
+            }
+            
+        }
     }
 };
 </script>
@@ -306,7 +320,7 @@ export default {
 
 .legend {
     margin: 5px;
-    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgb(135, 144, 153);
     padding: 5px;
 }
 
