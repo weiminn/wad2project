@@ -34,6 +34,7 @@ export default {
   name: "Card",
   props: {
     bookingDetails: Object,
+    coBookerMap: Object
   },
   data() {
     return {
@@ -159,15 +160,7 @@ export default {
     },
   },
   async created() {
-    this.coBookers_names = await Promise.all(Object.keys(this.coBookers).map(async (val) => {
-      let fullName = await userRef.child(val).once("value").then(function(snapshot) {
-          let data = snapshot.val();
-          return data.fullName
-      }).then(res => {return res})  
-      
-      return fullName
-    }))
-
+    this.coBookers_names = Object.keys(this.coBookers).map((val) => {return this.coBookerMap[val]})
     this.booker_name = await userRef.child(this.booker).once("value").then(function(snapshot){
       let data = snapshot.val();
       return data.fullName

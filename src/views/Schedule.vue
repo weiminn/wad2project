@@ -3,7 +3,9 @@
         
         <h3>
             Facility Booking
+            <b-button variant="primary" size="sm" @click="toggleDragStateEvent" style="width:100px;">{{displayToggleState}}</b-button>
         </h3>
+        
         
         <div class="row">
             <div class="col-md-5">
@@ -33,6 +35,7 @@
             :sticky-split-labels="true"
             :min-split-width="130"
             :snap-to-time="30"
+            :drag-to-create-event="toggleDragState"
             @event-drag-create="onEventCreate"
             @event-duration-change="onEventChange"
             @event-delete="onEventDelete"
@@ -45,6 +48,7 @@
             <!-- <div class="col"> -->
                 <b-button class="col-sm-3" style="margin-bottom:15px;width:100px;" @click="back">Back</b-button>
             <!-- </div> -->
+                
             <!-- <div class="col"> -->
                 <b-button class="col-sm-3" :disabled="!valid" style="margin-bottom:15px;width:100px;" @click="next" variant="primary">Next</b-button>
             <!-- </div> -->
@@ -106,10 +110,19 @@ export default {
             valid: false,
             params:{ title: false, drag: false, resize: true, delete: true, create: true },
             timeCellHeight: 40,
-            toastShown: false
+            toastShown: false,
+            toggleDragState: window.innerWidth > 768,
         };
     },
+    computed: {
+        displayToggleState: function() {
+            return this.toggleDragState ? "Edit Mode" : "View Mode"
+        }
+    },
     methods: {
+        toggleDragStateEvent(){
+            this.toggleDragState = !this.toggleDragState;
+        },
         displayRooms() {
         //display rooms
             for (let index = 1; index <= this.roomsToRetrieve.length; index++) {
