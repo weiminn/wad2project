@@ -200,7 +200,7 @@ export default {
                 coBookerIDs[val.booker] = true;
               }
    
-              if(val.booker == user.userID || ("coBookers" in val && user.userID in val.coBookers && !val.coBookers[user.userID])){
+              if(val.booker == user.userID || ("coBookers" in val && user.userID in val.coBookers && val.coBookers[user.userID])){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
               }
             }
