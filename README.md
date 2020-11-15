@@ -64,7 +64,7 @@ For development and debugging purposes, the project can be served locally via th
 npm run serve
 
 ```
-A local Node server will be started and the default serving URL is http://localhost:8080
+A local Node server will be started and the default serving URL is http://localhost:8080/app
 
 ## Steps to deploy to Cloud
 
