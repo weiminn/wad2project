@@ -108,7 +108,7 @@ export default {
             books: [],
             daySplits: [],
             valid: false,
-            params:{ title: false, drag: false, resize: true, delete: true, create: true },
+            params:{ title: false, drag: (window.innerWidth > 768), resize: true, delete: true, create: true },
             timeCellHeight: 40,
             toastShown: false,
             toggleDragState: window.innerWidth > 768,
@@ -122,6 +122,9 @@ export default {
     methods: {
         toggleDragStateEvent(){
             this.toggleDragState = !this.toggleDragState;
+            this.params.drag = !this.params.drag;
+            console.log(this.params);
+            console.log(this.toggleDragState);
         },
         displayRooms() {
         //display rooms
