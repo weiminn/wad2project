@@ -406,7 +406,7 @@ export default {
         this.purpose == "" ||
         this.usetype == "" ||
         this.bookingUsage == "" ||
-        this.cobookers.length == 0
+        cobookersID.length == 0
       ) {
         alert("you are required to fill up all the fields");
       } else {
