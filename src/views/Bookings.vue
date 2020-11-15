@@ -69,10 +69,12 @@ export default {
  
     
   },
+
   data() {
           return {
               bookings: {},
               user: Object,
+            coBookerMap:Object,
               fields: [
                   'booking',
                   'bookingStart',
@@ -84,7 +86,8 @@ export default {
                       key: 'actions',
                       label: 'Actions'
                   }
-              ],
+              ]
+             
             
 
             
@@ -142,7 +145,7 @@ export default {
             return new Date(val.bookingStart) > new Date();
           })
 
-           // console.log(coBookerIDs)
+            console.log(dataFormatted[0].resourceLinks)
             
             Object.keys(coBookerIDs).forEach(async (val)=>{ 
 
@@ -153,14 +156,17 @@ export default {
      
         coBookerIDs[val] = fullName;
 
+          
         });
-          console.log(dataFormatted)
-          if (dataFormatted.coBookers!=undefined){
-         console.log('hey')
-              Object.keys(dataFormatted.coBookers).forEach(function(key){
-                 console.log( coBookerIDs[key])
+      
+              Object.keys(dataFormatted).forEach(function(key){
+                  let cobookers =dataFormatted[key]["coBookers"];
+               
+                 Object.keys(cobookers).forEach(function(key){
+                    console.log( cobookers.key)
+                 });
               });
-        }    
+      
    
       
           return dataFormatted
