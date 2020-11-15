@@ -25,6 +25,7 @@
 
 <script>
 import app from "../firebase.service.js";
+import moment from "moment";
 
 const db = app.database();
 const bookingsRef = db.ref("booking");
@@ -50,10 +51,10 @@ export default {
   },
   computed: {
     bookingStart: function() {
-      return new Date(this.bookingDetails.bookingStart);
+      return this.bookingDetails.bookingStart;
     },
     bookingEnd: function() {
-      return new Date(this.bookingDetails.bookingEnd);
+      return this.bookingDetails.bookingEnd;
     },
     status: function() {
       return this.bookingDetails.status.toUpperCase();
@@ -144,19 +145,10 @@ export default {
     },
 
     formatDateRange: function(start, end) {
-      let DateTimeOpt = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: false,
-      };
-      if (start.toDateString() == end.toDateString()) {
-        return `${start.toLocaleString([],DateTimeOpt)} - ${end.toLocaleTimeString([], {hour: "numeric", minute: "numeric", hour12: false})}`;
-      } else {
-        return `${start.toLocaleString([], DateTimeOpt)} - ${end.toLocaleString([],DateTimeOpt)}`;
-      }
+      let bookingStart = moment(start, "MM-DD-YYYY, hh:mm:ss A")
+      let bookingEnd = moment(end, "MM-DD-YYYY, hh:mm:ss A")
+      return `${bookingStart.format("DD/MM/YYYY, HH:mm").toString()} - ${bookingEnd.format("HH:mm").toString()}`
+
     },
   },
   async created() {

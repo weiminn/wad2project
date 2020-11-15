@@ -91,6 +91,7 @@
 
 <script>
 import app from "../firebase.service.js";
+import moment from "moment";
 
 const db = app.database();
 const bookingRef = db.ref("booking");
@@ -184,7 +185,9 @@ export default {
           })
           
           dataFormatted = dataFormatted.filter(val => {
-            return new Date(val.bookingStart) > new Date();
+            let bookingStart = moment(val.bookingStart, "MM-DD-YYYY, hh:mm:ss A")
+            let today = moment(new Date())
+            return bookingStart.diff(today) > 0;
           })
 
           // console.log(dataFormatted[0].resourceLinks)
