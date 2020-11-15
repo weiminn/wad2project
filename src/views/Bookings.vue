@@ -10,22 +10,46 @@
 
          <template #row-details="row">
              <b-card>
-                 
                  <b-row class="mb-2 col-md-12">
-                     <b-col sm="12" md="6" class="text-sm-center">
-                         <b>Cobookers</b>
-                        <b-list-group v-for="cobooker in row.item.coBookerIDs"  v-bind:key="cobooker.id">
-                              {{ cobooker }}
-                        </b-list-group>
-                            
-                     </b-col>
+                    <b-col sm="12" md="6" class="text-sm-center">
+                        <b>Cobookers</b>
+                        
+                        
+                    </b-col>
+                    <b-col sm="12" md="6" class="text-sm-center">
+                      <div v-for="cobooker in Object.keys(row.item.coBookers)"  v-bind:key="cobooker">
+                        {{coBookerMap[cobooker]}}
+                      </div>
+                    </b-col>
 
 
-                     <b-col sm="12"  md="6"  class="text-sm-center">
-                         <b>Resource Links</b>
-                         
-                         
-                         </b-col>
+                    
+                 
+                 </b-row>
+                 <b-row class="mb-2 col-md-12">
+
+                    <b-col sm="12" md="6" class="text-sm-center">
+                        <b>Purpose</b>
+
+                    </b-col>
+                    <b-col sm="12" md="6" class="text-sm-center">
+                        <div>
+                          {{row.item.purpose}}
+                        </div>
+                    </b-col>
+                 
+                 </b-row>
+                 <b-row class="mb-2 col-md-12">
+
+                    <b-col sm="12"  md="6"  class="text-sm-center">
+                      <b>Resource Links</b>
+                    </b-col>
+                    <b-col sm="12" md="6" class="text-sm-center">
+                      <div v-for="link in row.item.resourceLinks" v-bind:key="link.URL">
+                        {{link["URL"]}}
+                      </div>
+                      <div v-if="row.item.resourceLinks == null"> - </div>
+                    </b-col>
                  
                  </b-row>
                  <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
@@ -46,7 +70,6 @@
          <b-col sm="12" md="12">
              <h3 class="mx-auto"> No bookings available! <a href="/">Create</a> a booking maybe?</h3>
          </b-col>
-
      </b-row>
  </b-container>
 </template>
@@ -59,53 +82,45 @@ const bookingRef = db.ref("booking");
 const userRef = db.ref("user");
 
 export default {
-    mounted(){
-      this.user = this.$store.state.userInfo;
-      this.userID = this.user.userID;
-     
-      this.loadBookings(bookingRef,this.user);
-    },
+  mounted(){
+    this.user = this.$store.state.userInfo;
+    this.userID = this.user.userID;
+  
+    this.loadBookings(bookingRef,this.user);
+  },
   components: {
- 
-    
+
   },
 
   data() {
-          return {
-              bookings: {},
-              user: Object,
-            coBookerMap:Object,
-              fields: [
-                  'booking',
-                  'bookingStart',
-                  'bookingEnd',
-                  'purpose',
-                  'coBookers',
-
-                  {
-                      key: 'actions',
-                      label: 'Actions'
-                  }
-              ]
-             
+    return {
+      bookings: {},
+      user: Object,
+      coBookerMap: null,
+      fields: [
+          'booking',
+          'bookingStart',
+          'bookingEnd',
+          'purpose',
+          {
+              key: 'actions',
+              label: 'Actions'
+          }
+      ]
             
-
-            
-      };
+    };
   },
   methods: {
 
    Delete(item, index, button){
-        console.log(item);
-        console.log(index);
-        console.log(button);
+      console.log(item);
+      console.log(index);
+      console.log(button);
 
-        let booking = bookingRef.child(item.id);
-        booking.remove()
+      let booking = bookingRef.child(item.id);
+      booking.remove()
 
-       this.bookings.splice(index,1);
-
-
+      this.bookings.splice(index,1);
       //  this.bookings.filter((b)=>b.id ==item.id)
    },
   
@@ -117,18 +132,16 @@ export default {
        
       // });
 
-
+      let coBookerIDs ={};
       let data = await bookingRef.once("value").then(function(snapshot) {
           let data = snapshot.val();
           let keys = Object.keys(data);
-            let coBookerIDs ={};
           let dataFormatted = Object.values(data).map((val, index) => {
             if (val != null){
-
                 
-              if ("coBookers" in val){
+              if ("coBookers" in val && (user.userID in val.coBookers || val.booker == user.userID)){
                 coBookerIDs = {...coBookerIDs, ...val.coBookers};
-             }
+              }
    
               if(val.booker == user.userID || ("coBookers" in val && user.userID in val.coBookers && !val.coBookers[user.userID])){
                 return {...val, status: val.status.toUpperCase(), id: keys[index]}
@@ -136,7 +149,6 @@ export default {
             }
           })
         
-
           dataFormatted = dataFormatted.filter(val => {
             return val != null
           })
@@ -145,35 +157,28 @@ export default {
             return new Date(val.bookingStart) > new Date();
           })
 
-            console.log(dataFormatted[0].resourceLinks)
-            
-            Object.keys(coBookerIDs).forEach(async (val)=>{ 
+          // console.log(dataFormatted[0].resourceLinks)
+          
+          Object.keys(coBookerIDs).forEach(async (val)=>{ 
 
             let fullName = await userRef.child(val).once("value").then(function(snapshot) {
-          let data = snapshot.val();
-          return data.fullName
-      }).then(res => {return res})  
-     
-        coBookerIDs[val] = fullName;
+              let data = snapshot.val();
+              return data.fullName
+            }).then(res => {return res})  
+            console.log(fullName);
+            coBookerIDs[val] = fullName;
 
-          
-        });
-      
-              Object.keys(dataFormatted).forEach(function(key){
-                  let cobookers =dataFormatted[key]["coBookers"];
-               
-                 Object.keys(cobookers).forEach(function(key){
-                    console.log( cobookers.key)
-                 });
-              });
-      
-   
+            
+          });
+          console.log(dataFormatted);
       
           return dataFormatted
       }).then(res => {return res})
-     
-       
-        this.bookings = data;
+      
+
+      this.coBookerMap = coBookerIDs;
+
+      this.bookings = data;
         
     }
   }
