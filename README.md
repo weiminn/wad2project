@@ -109,7 +109,15 @@ The Mail.php is currently hosted on an external cloud service and is called by t
 
 ## Credentials/API Keys
 
-Email (SendGrid)
+### Email (SendGrid)
+```
+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
+```
+
+User Account 
+- Authentication is by social login, any suitable **SMU** gmail account can be used to login. 
+- typically starts like xxxxx.xxxx@**smu.edu.sg**![enter image description here](screenshots%5C2020-11-15-20-21-wad2project.azurewebsites.net.png)
+
 
 
 
