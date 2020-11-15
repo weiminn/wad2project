@@ -882,17 +882,9 @@ export default {
   
                 currentAvailableFacilities[school][facilityType]--;  
               }
-              // else{
-              //     console.log("No Collision");
-              // }
-              // console.log(this.currentAvailableFacilities);
-              // console.log("YOOO THIS->" + this.defaultSchoolFacilities);
-              // console.log(this.defaultSchoolFacilities);
 
             }
-
             this.currentAvailableFacilities = currentAvailableFacilities;
-
           })
       })
     },
@@ -917,83 +909,6 @@ export default {
           })
         this.filterPastBookings();
       })
-
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-15-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-1"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-18-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-2"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-16-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-3"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-01-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-4"
-      // });
-      //      this.userPastBookings.push({
-      //   bookingStartDateTime : "10-14-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-5"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-12-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-1"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-14-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 3-1"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-07-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 3-3"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-06-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 3-3"
-      // });
-
-
-
-      //       this.userPastBookings.push({
-      //   bookingStartDateTime : "10-15-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-1"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-18-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-2"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-16-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-3"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-01-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-4"
-      // });
-      //      this.userPastBookings.push({
-      //   bookingStartDateTime : "10-14-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-5"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "10-12-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 2-1"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-05-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 3-3"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-06-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 3-3"
-      // });
-      // this.userPastBookings.push({
-      //   bookingStartDateTime : "11-07-2020, 03:30:00 PM",
-      //   facility : "SIS GSR 3-3"
-      // });
-
     },
     filterPastBookings: function(){
      
@@ -1068,21 +983,9 @@ export default {
                       toDateTime.getTime() > bookingStartTime.getTime()){
 
                   rejectedFacilities.push(booking.booking);
-
-                  // console.log("Collision");
-                  // let school = booking.booking.split(" ")[0];
-                  // let facilityType = booking.booking.split(" ")[1];
-                  // currentAvailableFacilities[school][facilityType]--;  
-
                 }
-                // else{
-                //     console.log("No Collision");
-                // }
-                // console.log(this.currentAvailableFacilities);
-                // console.log("YOOO THIS->" + this.defaultSchoolFacilities);
-                // console.log(this.defaultSchoolFacilities);
+            
               }
-              // this.currentAvailableFacilities = currentAvailableFacilities;
             }
           })
 
@@ -1207,8 +1110,6 @@ export default {
       fill:#1741ac !important;
      
     }
-
-    
   }
 
 </style>

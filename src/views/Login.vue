@@ -18,8 +18,7 @@
       
       </div>
       <div ref="loader" class="loader-center" style="display: none;">
-        <b-spinner variant="secondary" type="grow" label="Loading..."></b-spinner>
-      </div>
+      <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>      </div>
     </div>
   </div>
 </template>
