@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       STATUS: {
-        P: "Pending Confimation",
+        P: "Accept Confirmation",
         A: "Accepted",
       },
       coBookers: this.bookingDetails.coBookers,
