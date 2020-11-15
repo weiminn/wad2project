@@ -116,7 +116,6 @@ export default {
           'booking',
           'bookingStart',
           'bookingEnd',
-          'purpose',
           {
               key: 'actions',
               label: 'Actions'
