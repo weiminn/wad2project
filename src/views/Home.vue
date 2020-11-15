@@ -451,6 +451,7 @@
 <script>
 import VueTimepicker from 'vue2-timepicker/src/vue-timepicker.vue';
 import Multiselect from 'vue-multiselect';
+import moment from "moment";
 
 import app from "../firebase.service.js";
 
@@ -851,38 +852,30 @@ export default {
       let currentAvailableFacilities = JSON.parse(JSON.stringify(this.defaultSchoolFacilities));
 
       // console.log(currentAvailableFacilities);
+      let fromDateTime = moment(this.date).set({'hour': this.fromTime.HH, 'minute': this.fromTime.mm, 'second': 0});
+      let toDateTime = moment(this.date).set({'hour': this.toTime.HH, 'minute': this.toTime.mm, 'second': 0});
 
       bookings.once("value").then((snapshot) => {
           let data = snapshot.val();
 
-          let fromDateTime = new Date(this.date);
-          let toDateTime = new Date(this.date);
-
-          fromDateTime.setHours( this.fromTime.HH,this.fromTime.mm,0,0 );
-          toDateTime.setHours( this.toTime.HH,this.toTime.mm,0,0 );
-
           Object.values(data).filter((booking)=>{
             //console.log(booking);
 
-            let bookingStartTime = new Date(booking.bookingStart);
-            let bookingEndTime = new Date(booking.bookingEnd);
-            
-            // Only proceed if its the same date
-            if(bookingStartTime.toLocaleDateString() === fromDateTime.toLocaleDateString()){
+            let bookingStartTime = moment(booking.bookingStart, "MM-DD-YYYY, hh:mm:ss A");
+            let bookingEndTime = moment(booking.bookingEnd, "MM-DD-YYYY, hh:mm:ss A");
+
+            if(bookingStartTime.isSame(fromDateTime, 'date')){
               // console.log("Yo same date");
 
               //Checks to see if there is an overlap between requested time and booking time
-              if( bookingEndTime.getTime() > fromDateTime.getTime()  &&
-                    toDateTime.getTime() > bookingStartTime.getTime()){
-
-                // console.log("Collision");
+              if( bookingEndTime.diff(fromDateTime) > 0  && toDateTime.diff(bookingStartTime) > 0){
                 let school = booking.booking.split(" ")[0];
                 let facilityType = booking.booking.split(" ")[1];
 
   
                 currentAvailableFacilities[school][facilityType]--;  
               }
-
+          
             }
             this.currentAvailableFacilities = currentAvailableFacilities;
           })
@@ -918,7 +911,8 @@ export default {
       //Sort the objects by date
       pastBookings.sort(function(a,b){
         //console.log(new Date(b.bookingStartDateTime) - new Date(a.bookingStartDateTime));
-        return new Date(b.bookingStartDateTime) - new Date(a.bookingStartDateTime);
+        return moment(b.bookingStartDateTime, "MM-DD-YYYY, hh:mm:ss A").diff(moment(a.bookingStartDateTime,"MM-DD-YYYY, hh:mm:ss A"))
+
       });
 
       let now = new Date();
@@ -929,7 +923,7 @@ export default {
       // Add bookings facilities into new array that are made from the past month
       for(let booking of pastBookings){
 
-        let date = new Date(booking.bookingStartDateTime);
+        let date = moment(booking.bookingStartDateTime, "MM-DD-YYYY, hh:mm:ss A");
         if( date > now){
           this.filteredPastFacilitiesByMonth.push(booking.facility);
         }
@@ -956,32 +950,29 @@ export default {
         bookings.once("value").then((snapshot) => {
           let data = snapshot.val();
 
-          let fromDateTime = new Date(this.date);
-          let toDateTime = new Date(this.date);
-
-          fromDateTime.setHours( this.fromTime.HH,this.fromTime.mm,0,0 );
-          toDateTime.setHours( this.toTime.HH,this.toTime.mm,0,0 );
+          let fromDateTime = moment(this.date).set({'hour': this.fromTime.HH, 'minute': this.fromTime.mm, 'second': 0});
+          let toDateTime = moment(this.date).set({'hour': this.toTime.HH, 'minute': this.toTime.mm, 'second': 0});
 
           let facilitiesBookedInPastMonth = this.filteredPastFacilitiesByMonth;
           let rejectedFacilities = [];
 
           Object.values(data).filter((booking)=>{
-
-            //console.log(booking);
+            
+            // console.log(booking);
+            // alert(JSON.stringify(facilitiesBookedInPastMonth));
 
             if(facilitiesBookedInPastMonth.includes(booking.booking)){
 
-              let bookingStartTime = new Date(booking.bookingStart);
-              let bookingEndTime = new Date(booking.bookingEnd);
-              
+              let bookingStartTime = moment(booking.bookingStart, "MM-DD-YYYY, hh:mm:ss A");
+              let bookingEndTime = moment(booking.bookingEnd, "MM-DD-YYYY, hh:mm:ss A");
+              // alert(bookingStartTime);
               // Only proceed if its the same date
-              if(bookingStartTime.toLocaleDateString() === fromDateTime.toLocaleDateString()){
+              // alert()
+              if(bookingStartTime.isSame(fromDateTime, 'date')){
                 // console.log("Yo same date");
 
                 //Checks to see if there is an overlap between requested time and booking time
-                if( bookingEndTime.getTime() > fromDateTime.getTime()  &&
-                      toDateTime.getTime() > bookingStartTime.getTime()){
-
+                if( bookingEndTime.diff(fromDateTime) > 0  && toDateTime.diff(bookingStartTime) > 0){
                   rejectedFacilities.push(booking.booking);
                 }
             

@@ -78,6 +78,7 @@ import "vue-cal/dist/vuecal.css";
 
 // import router from '../router/index.js';
 import app from "../firebase.service.js";
+import moment from "moment";
 
 const db = app.database();
 const bookingRef = db.ref("booking");
@@ -147,9 +148,12 @@ export default {
             bookingRef.once("value").then((snapshot) => {
                 let data = snapshot.val();
                 var _books = Object.values(data).filter((b) => 
-                    (new Date(Date.parse(b.bookingStart))).getDate().toString() == date.getDate().toString() &&
-                    (new Date(Date.parse(b.bookingStart))).getMonth().toString() == date.getMonth().toString() &&
-                    (new Date(Date.parse(b.bookingStart))).getFullYear().toString() == date.getFullYear().toString()
+                    moment(b.bookingStart, "MM-DD-YYYY, hh:mm:ss A").get('year') == date.getFullYear() &&
+                    moment(b.bookingStart, "MM-DD-YYYY, hh:mm:ss A").get('month') == date.getMonth()&&
+                    moment(b.bookingStart, "MM-DD-YYYY, hh:mm:ss A").get('date') == date.getDate()
+                    // (new Date(Date.parse(b.bookingStart))).getDate().toString() == date.getDate().toString() &&
+                    // (new Date(Date.parse(b.bookingStart))).getMonth().toString() == date.getMonth().toString() &&
+                    // (new Date(Date.parse(b.bookingStart))).getFullYear().toString() == date.getFullYear().toString()
                 );
                 
                 // populate bookings for the rooms
@@ -203,6 +207,7 @@ export default {
         onEventCreate: function(event) {
             this.selectedArr.push(event);
             this.params.create = false;
+
             this.checkValid();
         },
         onEventDelete: function(event) {
@@ -217,6 +222,8 @@ export default {
                 return;
             }
 
+            
+
             if (
                 (new Date(this.selectedArr[0].start)).getFullYear() < (new Date()).getFullYear() &&
                 (new Date(this.selectedArr[0].start)).getMonth() < (new Date()).getMonth() &&
@@ -229,18 +236,20 @@ export default {
             for (var index = 0; index < this.books.length; index++) {
                 if(this.books[index].split == this.selectedArr[0].split){
                     if (
-                        ((new Date(this.selectedArr[0].start)) <= (new Date(this.books[index].start)) && 
-                        (new Date(this.selectedArr[0].end)) <= (new Date(this.books[index].start)))
+                        (moment(this.selectedArr[0].start).diff(moment(this.books[index].start, "MM-DD-YYYY, hh:mm:ss A")) <= 0 &&
+                        moment(this.selectedArr[0].end).diff(moment(this.books[index].start, "MM-DD-YYYY, hh:mm:ss A")) <= 0)
                         ||
-                        ((new Date(this.selectedArr[0].start)) >= (new Date(this.books[index].end)) && 
-                        (new Date(this.selectedArr[0].end)) >= (new Date(this.books[index].end)))
+                        (moment(this.selectedArr[0].start).diff(moment(this.books[index].end, "MM-DD-YYYY, hh:mm:ss A")) >= 0 &&
+                        moment(this.selectedArr[0].end).diff(moment(this.books[index].end, "MM-DD-YYYY, hh:mm:ss A")) >= 0)
                         ) {
                             //all clear
                             console.log("clear for " + index);
                     } else {
                         clear = false;
                         break;
-                    }      
+                    }    
+                    // alert()
+
                 }
                 if(index == this.books.length-1){
                     console.log("Ended Loop");
@@ -253,8 +262,10 @@ export default {
             }
         },
         checkValid: function() {
+
             if(this.selectedArr.length == 1){
                 this.checkClash((clear) => {
+
                     if(clear){
                         if((this.selectedArr[0].end - this.selectedArr[0].start)/(3600000) <= 4){
                             this.valid = true;
@@ -271,6 +282,7 @@ export default {
                     }
                 })                
             } else {
+                
                 this.showModal()
                 this.valid = false;
                 console.log("Please select one and only continuous slot.");
@@ -316,6 +328,7 @@ export default {
                 const hours = (new Date()).getHours() + (new Date()).getMinutes() / 60;
                 calendar.scrollTo({ top: hours * this.timeCellHeight, behavior: 'smooth' });
             }
+
             
         },
         showToast() {
