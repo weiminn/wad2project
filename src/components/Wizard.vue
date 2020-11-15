@@ -391,15 +391,15 @@ export default {
       // console.log(end);
       // console.log(this.to);
 
-      var formattedhourto = moment(this.to, "HH:mm:ss").format("HH");
-      var formattedhourfrom = moment(this.from, "HH:mm:ss").format("HH");
-      var formattedminto = moment(this.to, "HH:mm:ss").format("mm");
-      var formattedminfrom = moment(this.from, "HH:mm:ss").format("mm");
+      var formattedhourto = moment(this.to, "HH:mm:ss").format("HH:mm");
+      var formattedhourfrom = moment(this.from, "HH:mm:ss").format("HH:mm");
 
-      var timedifference =
-        (formattedhourto - formattedhourfrom) * 60 +
-        (formattedminfrom - formattedminto);
-      var totalCredits = (timedifference / 30) * 15;
+      var toTime =  moment(formattedhourto,"HH:mm");
+      var fromTime = moment(formattedhourfrom,"HH:mm");
+  
+      var difference = toTime.diff(fromTime, "minutes");
+    
+      var totalCredits = (difference / 30) * 15
       // totalCredits = 105
 
       if (
@@ -419,7 +419,7 @@ export default {
           );
          
           if (isValid) {
-            // console.log(cobookersID)
+            console.log(cobookersID)
             bookingRef.push({
               booking: this.facility,
               bookingStart: start,
