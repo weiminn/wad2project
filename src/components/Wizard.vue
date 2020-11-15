@@ -345,8 +345,6 @@ export default {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "no-cors", // no-cors, *cors, same-origin
         headers: {
-          Accept:
-            "application/json, application/xml, text/plain, text/html, *.*",
           "Content-Type": "form-data",
         },
         body: data, // body data type must match "Content-Type" header
@@ -436,39 +434,39 @@ export default {
             
             if(this.checkSend == true){
               this.$ics.addEvent(
-              "ru-ru",
-              this.purpose,
-              this.bookingUsage,
-              this.facility,
-              start,
-              end,
-              null,
-              null,
-              null
-            );
+                "ru-ru",
+                this.purpose,
+                this.bookingUsage,
+                this.facility,
+                moment(this.bookingDate + " " + this.from).toISOString(true),
+                moment(this.bookingDate + " " + this.to).toISOString(true),
+                null,
+                null,
+                null
+              );
 
-            this.cal = this.$ics.calendar();
-             var individualEmail ;
-            for(prop in cobookersEmail){
-                individualEmail = cobookersEmail[prop];
-                
-                let blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
-                let emailForm = new FormData();
-                emailForm.append("content","Please confirm " + this.facility + " booking" );
-                emailForm.append("recipient", individualEmail);
-                emailForm.append("attachment", blob, "calendar.ics");
-                // var emailContent = [emailForm];
-                this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
-            }
-            let blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
-            let emailForm = new FormData();
-            emailForm.append("content","Successfully made booking and waiting for confirmation for " + this.facility + " booking" );
-            emailForm.append("recipient", this.$store.state.userInfo.email);
-            emailForm.append("attachment", blob, "calendar.ics");
-            // var emailContent = [emailForm];
-            this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
+              this.cal = this.$ics.calendar();
+              var individualEmail ;
+              for(prop in cobookersEmail){
+                  individualEmail = cobookersEmail[prop];
+                  
+                  let blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
+                  let emailForm = new FormData();
+                  emailForm.append("content","Please confirm " + this.facility + " booking" );
+                  emailForm.append("recipient", individualEmail);
+                  emailForm.append("attachment", blob, "calendar.ics");
+                  // var emailContent = [emailForm];
+                  this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
+              }
+              let blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
+              let emailForm = new FormData();
+              emailForm.append("content","Successfully made booking and waiting for confirmation for " + this.facility + " booking" );
+              emailForm.append("recipient", this.$store.state.userInfo.email);
+              emailForm.append("attachment", blob, "calendar.ics");
+              // var emailContent = [emailForm];
+              this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
            
-            
+              this.$ics.removeAllEvents();
               
             }else{
 
