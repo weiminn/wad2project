@@ -23,9 +23,21 @@
                     </b-col>
 
 
-                    
+                 </b-row>
+
+ <b-row class="mb-2 col-md-12">
+
+                    <b-col sm="12"  md="6"  class="text-sm-center">
+                      <b>Booking Status </b>
+                    </b-col>
+                    <b-col sm="12" md="6" class="text-sm-center">
+                      
+                      {{getbookingstatus(row.item.status)}}
+                    </b-col>
                  
                  </b-row>
+
+
                  <b-row class="mb-2 col-md-12">
 
                     <b-col sm="12" md="6" class="text-sm-center">
@@ -52,7 +64,10 @@
                     </b-col>
                  
                  </b-row>
-                 <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
+
+
+                
+                 <!-- <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button> -->
              </b-card>
          </template>
 
@@ -110,7 +125,23 @@ export default {
             
     };
   },
+
   methods: {
+ getbookingstatus(status) {
+     let s ="";
+       switch (status) {
+        case "A":
+          s ="Accepted"
+          break;
+        case "P":
+          s ="Pending"
+          break;
+        default:
+          break;
+       
+       }
+        return s 
+ },
 
    Delete(item, index, button){
       console.log(item);
@@ -123,8 +154,8 @@ export default {
       this.bookings.splice(index,1);
       //  this.bookings.filter((b)=>b.id ==item.id)
    },
-  
-    
+ 
+   
    async loadBookings(bookingRef,user){
       // bookingRef.once("value").then((snapshot) => {
       //   let data = snapshot.val();
