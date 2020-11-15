@@ -82,7 +82,10 @@ npm run build
 
 ## Steps to deploy Email Rest API
 
-The included files under the Mail folder, is to be deployed to a PHP server.The URL of the server is then to be replaced in the Wizard.vue file under **src/components/**
+The included files under the Mail folder, are to be deployed to a PHP server. The URL of the server is then to be replaced in the Wizard.vue file under **src/components/**
+
+example of the URL to be replaced
+![enter image description here](screenshots/email_server_endpoint.PNG)
 
 ## Project Structure 
 
@@ -103,6 +106,12 @@ Authentication/User Pages
 
 ### Email Rest API(mail.php)
 The Mail.php is currently hosted on an external cloud service and is called by the main application to send out the booking confirmation emails. Steps to deploy are included above.
+
+## Credentials/API Keys
+
+Email (SendGrid)
+
+
 
 
 
