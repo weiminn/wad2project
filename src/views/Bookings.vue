@@ -6,12 +6,13 @@
 
      <b-table striped hover outlined :items="bookings" :fields="fields" v-if="bookings.length > 0 " responsive="lg" ref="bookingTable" stacked="md">
         <template #cell(actions)="row">
+               <b-button size="sm" @click="row.toggleDetails" class="m-1">
+            {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+          </b-button>
           <b-button size="sm" @click="Delete(row.item, row.index, $event.target)" class="m-1 btn btn-danger">
             Delete
           </b-button>
-          <b-button size="sm" @click="row.toggleDetails" class="m-1">
-            {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
-          </b-button>
+       
         </template>
 
         <template #row-details="row">
