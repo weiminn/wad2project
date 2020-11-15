@@ -4,11 +4,11 @@
 
 ## TEAM MEMBERS:
 
-- Po Qilin
-- Amanda
-- Ram
-- Eeki
-- Wei Min
+- Amanda Choo Yun Xuan
+- Po Qi Lin
+- Baratharam S/O Manogaran
+- Then Ee ki
+- Wei Minn
 
   
 ## Project Overview
