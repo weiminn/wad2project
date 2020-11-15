@@ -452,7 +452,7 @@ export default {
             for(prop in cobookersEmail){
                 individualEmail = cobookersEmail[prop];
                 
-                var blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
+                let blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
                 let emailForm = new FormData();
                 emailForm.append("content","Please confirm " + this.facility + " booking" );
                 emailForm.append("recipient", individualEmail);
@@ -460,6 +460,13 @@ export default {
                 // var emailContent = [emailForm];
                 this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
             }
+            let blob = new Blob([this.$ics.calendar()], {type: "text/calendar;charset=utf-8",});
+            let emailForm = new FormData();
+            emailForm.append("content","Successfully made booking and waiting for confirmation for " + this.facility + " booking" );
+            emailForm.append("recipient", this.$store.state.userInfo.email);
+            emailForm.append("attachment", blob, "calendar.ics");
+            // var emailContent = [emailForm];
+            this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
            
             
               
@@ -474,7 +481,12 @@ export default {
                 // var emailContent = [emailForm];
                 this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
                 // console.log(result)
-            }
+              }
+              let emailForm = new FormData();
+              emailForm.append("content","Successfully made booking and waiting for confirmation for " + this.facility + " booking" );
+              emailForm.append("recipient", this.$store.state.userInfo.email);
+              // var emailContent = [emailForm];
+              this.postData("https://dng4new.azurewebsites.net/mail/", emailForm);
 
             }
           
